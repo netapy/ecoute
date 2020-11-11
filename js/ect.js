@@ -53,10 +53,10 @@ function JeSuisLanceur() {
         p.addStream(stream) // <- add streams to peer dynamically
     }
 
-    navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false
-    }).then(addMedia).catch(() => {})
+    //navigator.mediaDevices.getUserMedia({
+    //    video: true,
+    //    audio: false
+    //}).then(addMedia).catch(() => {})
 }
 
 function jeSuisRecepteur() {
@@ -112,10 +112,10 @@ function jeSuisRecepteur() {
         p.addStream(stream) // <- add streams to peer dynamically
     }
 
-    navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false
-    }).then(addMedia).catch(() => {})
+    //navigator.mediaDevices.getUserMedia({
+    //    video: true,
+    //    audio: false
+    //}).then(addMedia).catch(() => {})
 
 }
 
