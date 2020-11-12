@@ -11,26 +11,24 @@
     integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
   <link rel="stylesheet" href="css/ect.css">
   <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
   <div class="container"
     style="background-color: #fdfdfd; height: 100vh; max-height: 100vh; padding: 0px; max-width: 800px;">
-    3
+    4.2
     <div class="d-flex justify-content-around flex-column h-100">
-      <div class="zonePrincipale d-flex align-items-center justify-content-center" id="zonePrincipalee">
-
+      <div class="zonePrincipale d-flex flex-column align-items-center justify-content-center " id="zonePrincipalee">
       </div>
       <div>
         <div class="row">
           <div class="col-md-6">
             <div class="bouton-role" id="BtnLaunchCom" style="background-color: #5770BE;"
-              onclick="changementDeMenu(this)">Je <u>lance</u> un appel.</div>
+              onclick="changementDeMenu(this)">Connexion.</div>
           </div>
           <div class="col-md-6">
             <div class="bouton-role" id="BtnRecepCom" style="background-color: #FF8D7E;"
-              onclick="changementDeMenu(this)">Je <u>reçois</u> un appel.</div>
+              onclick="changementDeMenu(this)">Envois de message.</div>
           </div>
           <div class="col-md-12">
             <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
@@ -46,15 +44,7 @@
     </div>
   </div>
 
-  <!-- <form>
-    <textarea id="incoming"></textarea>
-    <button type="submit">submit</button>
-  </form>
-  <pre id="outgoing" style="width: 600px; word-wrap: break-word;white-space: normal;"></pre>
-  <div>
-    <video id="video"></video>
-  </div> -->
-  <script src="js/simplepeer.min.js"></script>
+  <script src="js/peerjs.min.js"></script>
   <script src="js/ect.js"></script>
 </body>
 
