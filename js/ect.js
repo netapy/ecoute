@@ -6,7 +6,7 @@ function JeSuisLanceur() {
     let iddMoi = document.getElementById('SaisieIDd').value;
 
     peer = new Peer(iddMoi, {
-        host: '176.159.35.44',
+        host: 'signal.ecoute.app',
         port: 9000,
         path: '/ecouteapp'
     });
