@@ -70,7 +70,7 @@ body {
     color: #5770BE;
 }
 
-.inputEcoute{
+.inputEcoute {
     border-radius: 6px;
     border-width: 0px;
     padding: 10px;
@@ -80,25 +80,61 @@ body {
     border-radius: 6px;
     border-width: 0px;
     padding: 10px 20px;
-    background-color:  #5770BE;
+    background-color: #5770BE;
     color: white;
 }
 
 #qrcode {
     border-radius: 6px;
     border-width: 2px;
-    border-color:  #5770BE;
+    border-color: #5770BE;
+    display: none;
 }
 
-.smsContainer{
+#qrBtn{
+    border-radius: 3px;
+    background-color: #EEF1F9;
+    border-width: 0px;
+    padding: 10px;
+}
+
+#smsContainer {
     background-color: #fdfdfd;
     width: 100%;
     min-height: 10vh;
+    max-height: 20vh;
     border-radius: 6px;
     margin: 5px 0px;
+    overflow: scroll;
 }
 
-#vidfeedback{
+#vidfeedback {
     height: auto;
     display: none;
+}
+
+#cameraDiv {
+    position: absolute;
+    width: 88vw;
+    height: auto;
+    background-color: black;
+    z-index: 2002;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    display: none;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+hr{
+    border-width: 0px;
+    border-bottom-width: 1px;
+    border-color: #838383;
+    border-style: dotted;
+    width: 80%;
+}
+
+.smsTxt{
+    width: 100%;
+    padding: 3px;
 }

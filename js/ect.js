@@ -48,17 +48,9 @@ function JeSuisLanceur(mode) {
 
     peer.on('connection', function (cc) {
         console.log("connexion entrante ");
-
         conn = cc;
         idAutre = conn.peer;
-        conn.on('data', function (data) {
-            alert(data);
-        });
-        conn.on('close', function (data) {
-            alert("L'un de vous s'est deconnecté.")
-            changementDeMenu(fakeBtnMenu[0])
-        });
-        changementDeMenu(fakeBtnMenu[1])
+        paramConn()
     });
 
     peer.on('disconnected', function () {
@@ -71,7 +63,7 @@ function JeSuisLanceur(mode) {
         call = appel_entrant;
         call.on('stream', function (streamOfPeer) {
             videoDiv = document.getElementById("vidFeedback");
-            videoDiv.style.display = "";
+            videoDiv.style.display = "block";
             videoDiv.srcObject = streamOfPeer;
             videoDiv.play();
         });
@@ -85,22 +77,28 @@ function Connexion() {
         let iddContact = document.getElementById('IdDuContact').value;
         conn = peer.connect(iddContact);
         idAutre = iddContact;
-        conn.on('data', function (data) {
-            alert(data);
-        });
-        conn.on('close', function (data) {
-            alert("L'un de vous s'est deconnecté.")
-            changementDeMenu(fakeBtnMenu[0])
-        });
-        changementDeMenu(fakeBtnMenu[1])
+        paramConn()
     } else {
         alert("Rentre le nom de ton contact.")
     }
 }
 
+function paramConn() {
+    conn.on('data', function (data) {
+        document.querySelector("#smsContainer").insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(data) + "</div>");
+    });
+    conn.on('close', function (data) {
+        alert("L'un de vous s'est deconnecté.")
+        changementDeMenu(fakeBtnMenu[0])
+    });
+    changementDeMenu(fakeBtnMenu[1])
+}
+
 function SendMessage() {
-    let msgAEnvoyer = document.getElementById('idmsgAEnvoyer').value;
-    conn.send(msgAEnvoyer);
+    let msgAEnvoyer = document.getElementById('idmsgAEnvoyer');
+    conn.send(msgAEnvoyer.value);
+    document.querySelector("#smsContainer").insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(msgAEnvoyer.value) + "</div>");
+    msgAEnvoyer.value = "";
 }
 
 function CallDude() {
@@ -124,9 +122,9 @@ var dicoZones = {
 
     'BtnParam': "<div style='padding: 10px; max-width:550px;'><h4>Ecoute.app</h4><p><strong>Ecoute</strong> est entièrement libre d'utilisation et fonctionne entièrement sans utiliser tes données.<br>C'est comme utiliser un <strong>talkie-walkie</strong> sous stéroïdes. Utilise le sans modération. Tout ce qui se passe ici reste entre toi et ton interlocuteur. </p><p>-B</p></div>",
 
-    'BtnConnaissance': '<h4>Mon identifiant:</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><span><input class="inputEcoute" type="text" placeholder="Nom de ton ami" id="IdDuContact"><button onClick="alert(\'Camera QR code !\')">QR</button></span><button id="btn-connex" onclick="Connexion()">Connexion</button><br>',
+    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><button id="qrBtn" onClick="afficheQR()">&#10140; Ton code QR</button><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span><input class="inputEcoute" type="text" placeholder="Nom de ton ami" id="IdDuContact" style="width:80%"><button id="qrBtn" onClick="lancementCameraQR();">📸</button></span><button id="btn-connex" onclick="Connexion()">Connexion</button><br>',
 
-    'BtnUIMessages': '<div><h2 id="titreConv">Messages</h2><video id="vidFeedback" width="100%"></video><button onclick="CallDude()">Camera</button><span><div class="smsContainer"></div><input type="text" class="inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button onclick="SendMessage()">Send</button></span></div>',
+    'BtnUIMessages': '<div><h2 id="titreConv">Messages</h2><video id="vidFeedback" width="100%"></video><button onclick="CallDude()">Camera</button><span><div id="smsContainer"></div><input type="text" class="inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button onclick="SendMessage()">Send</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -181,4 +179,10 @@ if (localStorage.getItem("codeAmi") != null) {
     console.log("code ami! ")
     idAutre = localStorage.getItem("codeAmi");
     changementDeMenu(fakeBtnMenu[2]);
+    document.querySelector("#boutonsMenu").style.transform = "translateY(50vh)";
 };
+
+function afficheQR() {
+    document.querySelector("#qrcode").style.display = "block";
+    document.querySelector("#qrBtn").style.display = "none";
+}

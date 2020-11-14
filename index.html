@@ -14,8 +14,16 @@
 </head>
 
 <body>
-  <div class="container MainContainerStyle">
-    <span style="position: absolute; opacity: .5;">4.6</span>
+  <div id="cameraDiv">
+    <div id="loadingMessage">Autorise l'accés à ta caméra pour lire un code QR.</div>
+    <canvas style="width: 100%;" id="canvas" hidden></canvas>
+    <div id="output" hidden>
+      <div id="outputMessage">No QR code detected.</div>
+      <div hidden><b>Data:</b> <span id="outputData"></span></div>
+    </div>
+  </div>
+  <div class="container MainContainerStyle" id="mainContainer">
+    <span style="position: absolute; opacity: .3;">4.8</span>
     <span id="returnArrow" onclick="changementDeMenu(this);peer.destroy()">&#x293E;</span>
     <div class="d-flex justify-content-around flex-column h-100" style="position: relative;">
       <div class="zonePrincipale d-flex flex-column align-items-center justify-content-around" id="zonePrincipalee">
@@ -31,7 +39,7 @@
               onclick="changementDeMenu(this)">Appel aléatoire.</div>
           </div>
           <div class="col-md-12">
-            <div class="bouton-role" id="BtnUIMessages" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
+            <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
               onclick="changementDeMenu(this)">
               Plus
             </div>
@@ -42,12 +50,13 @@
     <!-- <div class="fixed-bottom" style="background-color: #5770BE;"><br></div> -->
     <div class="fixed-top" style="background-color: #FDFDFD;">
     </div>
-  </div> 
+  </div>
   <script src="js/peerjs.min.js"></script>
   <script src="js/ect.js"></script>
   <script src="js/adapter.min.js"></script>
   <script src="js/qrcode.js"></script>
   <script src="js/jsQR.js"></script>
+  <script src="js/qrreader.js"></script>
 </body>
 
 </html>
