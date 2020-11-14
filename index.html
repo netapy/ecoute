@@ -14,24 +14,24 @@
 </head>
 
 <body>
-  <div class="container"
-    style="background-color: #fdfdfd; height: 100vh; max-height: 100vh; padding: 0px; max-width: 800px;">
-    4.5
-    <div class="d-flex justify-content-around flex-column h-100">
-      <div class="zonePrincipale d-flex flex-column align-items-center justify-content-center " id="zonePrincipalee">
+  <div class="container MainContainerStyle">
+    <span style="position: absolute; opacity: .5;">4.6</span>
+    <span id="returnArrow" onclick="changementDeMenu(this);peer.destroy()">&#x293E;</span>
+    <div class="d-flex justify-content-around flex-column h-100" style="position: relative;">
+      <div class="zonePrincipale d-flex flex-column align-items-center justify-content-around" id="zonePrincipalee">
       </div>
-      <div>
+      <div id="boutonsMenu">
         <div class="row">
           <div class="col-md-6">
-            <div class="bouton-role" id="BtnLaunchCom" style="background-color: #5770BE;"
-              onclick="changementDeMenu(this)">Connexion.</div>
+            <div class="bouton-role" id="BtnConnaissance" style="background-color: #5770BE;"
+              onclick="changementDeMenu(this)">Appel à un ami.</div>
           </div>
           <div class="col-md-6">
-            <div class="bouton-role" id="BtnRecepCom" style="background-color: #FF8D7E;"
-              onclick="changementDeMenu(this)">Envois de message.</div>
+            <div class="bouton-role" id="BtnAleatoire" style="background-color: #FF8D7E;"
+              onclick="changementDeMenu(this)">Appel aléatoire.</div>
           </div>
           <div class="col-md-12">
-            <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
+            <div class="bouton-role" id="BtnUIMessages" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
               onclick="changementDeMenu(this)">
               Plus
             </div>
@@ -42,11 +42,12 @@
     <!-- <div class="fixed-bottom" style="background-color: #5770BE;"><br></div> -->
     <div class="fixed-top" style="background-color: #FDFDFD;">
     </div>
-  </div>
-
+  </div> 
   <script src="js/peerjs.min.js"></script>
   <script src="js/ect.js"></script>
   <script src="js/adapter.min.js"></script>
+  <script src="js/qrcode.js"></script>
+  <script src="js/jsQR.js"></script>
 </body>
 
 </html>

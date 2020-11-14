@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ecoute Link</title>
+</head>
+
+<body>
+
+    <script>
+        source = String(window.location.href).split('/').pop()
+        localStorage.setItem("codeAmi", source)
+        print("code actif ->" + source)
+        window.location.href = 'index.html';
+    </script>
+
+</body>
+
+</html>
