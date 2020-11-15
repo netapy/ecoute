@@ -32,10 +32,12 @@ function JeSuisLanceur(mode) {
         document.getElementById("monIdFrr").innerHTML = idMoi;
         new QRCode(document.getElementById("qrcode"), {
             text: idMoi,
-            width: 128,
-            height: 128,
+            width: 80,
+            height: 80,
             colorLight: "#eeeeee"
         });
+        document.querySelector("#connexStat").innerHTML = "Connecté <span style='color:green;'>&#10004;</span>"
+        document.querySelector("#connexStat").style.animation = "none";
         idDefini = true;
     });
     if (idMoi != "") {
@@ -73,22 +75,20 @@ function JeSuisLanceur(mode) {
 }
 
 function Connexion() {
-    if (document.querySelector("#idDuContact").value != "") {
-        let iddContact = document.getElementById('IdDuContact').value;
-        conn = peer.connect(iddContact);
-        idAutre = iddContact;
-        paramConn()
-    } else {
-        alert("Rentre le nom de ton contact.")
-    }
+    let iddContact = document.getElementById('IdDuContact').value;
+    conn = peer.connect(iddContact);
+    idAutre = iddContact;
+    paramConn()
 }
 
 function paramConn() {
     conn.on('data', function (data) {
-        document.querySelector("#smsContainer").insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(data) + "</div>");
+        divSms = document.querySelector("#smsContainer")
+        divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(data) + "</div>");
+        divSms.scrollTop = divSms.scrollHeight;
     });
     conn.on('close', function (data) {
-        alert("L'un de vous s'est deconnecté.")
+        swal("Info", "L'un de vous s'est deconnecté.")
         changementDeMenu(fakeBtnMenu[0])
     });
     changementDeMenu(fakeBtnMenu[1])
@@ -97,8 +97,10 @@ function paramConn() {
 function SendMessage() {
     let msgAEnvoyer = document.getElementById('idmsgAEnvoyer');
     conn.send(msgAEnvoyer.value);
-    document.querySelector("#smsContainer").insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(msgAEnvoyer.value) + "</div>");
+    let divSms = document.querySelector("#smsContainer")
+    divSms.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(msgAEnvoyer.value) + "</div>");
     msgAEnvoyer.value = "";
+    divSms.scrollTop = divSms.scrollHeight;
 }
 
 function CallDude() {
@@ -111,7 +113,7 @@ function CallDude() {
         })
         .catch(function (err) {
             console.log(err);
-            alert("Faudra activer ta cam pour lancer l'appel.");
+            swal("Faudra activer ta cam pour lancer l'appel.");
         });
 }
 
@@ -122,9 +124,9 @@ var dicoZones = {
 
     'BtnParam': "<div style='padding: 10px; max-width:550px;'><h4>Ecoute.app</h4><p><strong>Ecoute</strong> est entièrement libre d'utilisation et fonctionne entièrement sans utiliser tes données.<br>C'est comme utiliser un <strong>talkie-walkie</strong> sous stéroïdes. Utilise le sans modération. Tout ce qui se passe ici reste entre toi et ton interlocuteur. </p><p>-B</p></div>",
 
-    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><button id="qrBtn" onClick="afficheQR()">&#10140; Ton code QR</button><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span><input class="inputEcoute" type="text" placeholder="Nom de ton ami" id="IdDuContact" style="width:80%"><button id="qrBtn" onClick="lancementCameraQR();">📸</button></span><button id="btn-connex" onclick="Connexion()">Connexion</button><br>',
+    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col-10" type="text" placeholder="Son nom..." id="IdDuContact"><button class="col-2" id="qrBtn" onClick="lancementCameraQR();">📸</button></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div><h2 id="titreConv">Messages</h2><video id="vidFeedback" width="100%"></video><button onclick="CallDude()">Camera</button><span><div id="smsContainer"></div><input type="text" class="inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button onclick="SendMessage()">Send</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><video id="vidFeedback" width="100%"></video><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -150,15 +152,31 @@ function changementDeMenu(bouton) {
             zonePrincipalee.innerHTML = dicoZones[bouton.id];
             zoneParamID.style.transform = "rotateX(0deg)";
             if (bouton.id == "BtnUIMessages") {
-                zoneParamID.style.height = "85%";
+                zoneParamID.style.height = "92%";
                 zoneBoutons.style.display = "none";
                 flecheRetour.style.transform = "translateX(0)";
+                document.querySelector("#connexStat").style.display = "none";
+                document.querySelector("#titreConv").innerHTML = "✉️ " + String(idAutre)
+                document.querySelector('#idmsgAEnvoyer').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        SendMessage()
+                    }
+                });
             } else {
                 flecheRetour.style.transform = "translateX(50px)";
                 zoneBoutons.style.transform = "translateY(0vh)"
+                document.querySelector("#connexStat").style.display = "block";
             }
             if (bouton.id == "BtnConnaissance") {
-                if (localStorage.getItem("codeAmi") != null) document.querySelector("#IdDuContact").value = idAutre
+                document.querySelector('#IdDuContact').addEventListener('keypress', function (e) {
+                    if (document.querySelector('#IdDuContact').value != '' && idDefini == true) {
+                        let boutonConnex = document.querySelector("#btn-connex")
+                        boutonConnex.style.backgroundColor = "#5770BE";
+                        boutonConnex.disabled = false;
+                    }
+                });
+                if (localStorage.getItem("codeAmi") != null) document.querySelector("#IdDuContact").value = idAutre;
+                document.querySelector("#connexStat").style.display = "block";
                 JeSuisLanceur(bouton.id)
             }
         }, 400);
@@ -181,8 +199,3 @@ if (localStorage.getItem("codeAmi") != null) {
     changementDeMenu(fakeBtnMenu[2]);
     document.querySelector("#boutonsMenu").style.transform = "translateY(50vh)";
 };
-
-function afficheQR() {
-    document.querySelector("#qrcode").style.display = "block";
-    document.querySelector("#qrBtn").style.display = "none";
-}

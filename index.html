@@ -14,6 +14,8 @@
 </head>
 
 <body>
+  <!-- particles.js container -->
+  <div id="particles-js"></div>
   <div id="cameraDiv">
     <div id="loadingMessage">Autorise l'accés à ta caméra pour lire un code QR.</div>
     <canvas style="width: 100%;" id="canvas" hidden></canvas>
@@ -23,7 +25,8 @@
     </div>
   </div>
   <div class="container MainContainerStyle" id="mainContainer">
-    <span style="position: absolute; opacity: .3;">4.8</span>
+    <span style="position: absolute; opacity: .3;top: 2px; left:2px;">4.10</span>
+    <span id="connexStat">Connexion...</span>
     <span id="returnArrow" onclick="changementDeMenu(this);peer.destroy()">&#x293E;</span>
     <div class="d-flex justify-content-around flex-column h-100" style="position: relative;">
       <div class="zonePrincipale d-flex flex-column align-items-center justify-content-around" id="zonePrincipalee">
@@ -39,9 +42,9 @@
               onclick="changementDeMenu(this)">Appel aléatoire.</div>
           </div>
           <div class="col-md-12">
-            <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 5px;"
+            <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 8px;"
               onclick="changementDeMenu(this)">
-              Plus
+              Plus  
             </div>
           </div>
         </div>
@@ -55,8 +58,104 @@
   <script src="js/ect.js"></script>
   <script src="js/adapter.min.js"></script>
   <script src="js/qrcode.js"></script>
-  <script src="js/jsQR.js"></script>
+  <script src="js/jsQR.min.js"></script>
   <script src="js/qrreader.js"></script>
+  <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 2,
+          "density": {
+            "enable": true,
+            "value_area": 100
+          }
+        },
+        "color": {
+          "value": "#5770be"
+        },
+        "shape": {
+          "type": "circle",
+        },
+        "opacity": {
+          "value": 0.1,
+          "random": false,
+          "anim": {
+            "enable": false,
+            "speed": 20,
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 5,
+          "random": true,
+          "anim": {
+            "enable": false,
+            "speed": 220,
+            "size_min": 0.1,
+            "sync": false
+          }
+        },
+        "move": {
+          "enable": true,
+          "speed": 7,
+          "direction": "bottom",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 560,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": false,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": false,
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 400,
+            "line_linked": {
+              "opacity": 1
+            }
+          },
+          "bubble": {
+            "distance": 400,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 24
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
 </body>
 
 </html>
