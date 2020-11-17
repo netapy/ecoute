@@ -17,6 +17,7 @@
   <!-- particles.js container -->
   <div id="particles-js"></div>
   <div id="cameraDiv">
+    <span class="clsbtnCam" onclick="streaam.getTracks().forEach(track => track.stop()); this.parentElement.style.display = 'none'">X</span>
     <div id="loadingMessage">Autorise l'accés à ta caméra pour lire un code QR.</div>
     <canvas style="width: 100%;" id="canvas" hidden></canvas>
     <div id="output" hidden>
@@ -25,7 +26,7 @@
     </div>
   </div>
   <div class="container MainContainerStyle" id="mainContainer">
-    <span style="position: absolute; opacity: .3;top: 2px; left:2px;">4.10</span>
+    <span style="position: absolute; opacity: .3;top: 2px; left:2px;">4.11</span>
     <span id="connexStat">Connexion...</span>
     <span id="returnArrow" onclick="changementDeMenu(this);peer.destroy()">&#x293E;</span>
     <div class="d-flex justify-content-around flex-column h-100" style="position: relative;">
@@ -44,7 +45,7 @@
           <div class="col-md-12">
             <div class="bouton-role" id="BtnParam" style="background-color: #fdfdfd;color:#4d4d4d; padding: 8px;"
               onclick="changementDeMenu(this)">
-              Plus  
+              Plus
             </div>
           </div>
         </div>
@@ -60,7 +61,7 @@
   <script src="js/qrcode.js"></script>
   <script src="js/jsQR.min.js"></script>
   <script src="js/qrreader.js"></script>
-  <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <script>
@@ -102,7 +103,7 @@
         "move": {
           "enable": true,
           "speed": 7,
-          "direction": "bottom",
+          "direction": "bottom-left",
           "random": true,
           "straight": false,
           "out_mode": "out",

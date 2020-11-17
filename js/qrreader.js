@@ -2,12 +2,12 @@ var video = document.createElement("video");
 var canvasElement = document.getElementById("canvas");
 var canvas = canvasElement.getContext("2d");
 var loadingMessage = document.getElementById("loadingMessage");
+var streaam;
 
 function lancementCameraQR() {
     var outputData = document.getElementById("IdDuContact");
     console.log("-- fonction caméra")
     document.querySelector("#cameraDiv").style.display = "block";
-    let streaam;
     navigator.mediaDevices.getUserMedia({
         video: {
             facingMode: "environment"
@@ -34,8 +34,8 @@ function lancementCameraQR() {
                 inversionAttempts: "dontInvert",
             });
             if (code) {
-                outputData.value = code.data;
                 console.log(code.data)
+                outputData.value = String(code.data).replace("https://ecoute.app/","");
                 document.querySelector("#cameraDiv").style.display = "none";
                 streaam.getTracks().forEach(track => track.stop())
             } 

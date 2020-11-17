@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   viewBox="0 0 264.58333 264.58334"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="logo2.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     inkscape:snap-text-baseline="false"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="441.40458"
+     inkscape:cy="493.44232"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="2160"
+     inkscape:window-height="1346"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path10"
+       d="m 114.23108,75.763788 c 4.64391,6.295073 5.46951,14.757326 6.96587,24.767502 1.49637,9.95864 3.61193,21.46522 -1.03197,28.32787 -4.64392,6.86267 -16.15049,9.13301 -27.14108,8.66863 -11.042177,-0.4128 -21.619958,-3.61191 -28.327828,-10.47458 -6.656264,-6.86268 -9.442606,-17.44046 -9.13302,-27.708686 0.361203,-10.21659 3.766731,-20.175211 10.474599,-26.418656 6.656265,-6.295087 16.614857,-8.875048 25.799482,-8.152642 9.236217,0.72238 17.698447,4.747104 22.393947,10.990562 z"
+       fill="#5770be"
+       style="stroke-width:0.515989" />
+    <path
+       style="fill:#ff8d7e;fill-opacity:1;stroke-width:0.51599"
+       fill="#5770be"
+       d="m 150.43245,128.3747 c -4.64394,-6.29508 -5.46954,-14.75733 -6.96592,-24.76753 -1.49638,-9.958616 -3.61195,-21.465192 1.032,-28.32786 4.64393,-6.862681 16.15057,-9.133006 27.14121,-8.668645 11.04224,0.412807 21.6201,3.611929 28.32799,10.474597 6.65632,6.862678 9.44266,17.440462 9.13306,27.708688 -0.36119,10.21661 -3.76674,20.17522 -10.47464,26.41866 -6.6563,6.29509 -16.61496,8.87505 -25.79963,8.15265 -9.23627,-0.72238 -17.69855,-4.7471 -22.39407,-10.99056 z"
+       id="path10-5" />
+    <text
+       id="text18"
+       y="188.45787"
+       x="22.28644"
+       style="font-style:normal;font-weight:normal;font-size:40.8728px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.425758"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40.8728px;font-family:'Lexend Deca';-inkscape-font-specification:'Lexend Deca';stroke-width:0.425758"
+         y="188.45787"
+         x="22.28644"
+         id="tspan16"
+         sodipodi:role="line">ecoute<tspan
+   id="tspan864"
+   style="fill:#ff8d7e;fill-opacity:1">.</tspan>app</tspan></text>
+  </g>
+</svg>

@@ -1,3 +1,4 @@
+var lastPressed;
 var peer;
 var conn;
 var call;
@@ -16,7 +17,7 @@ let fakeBtnMenu = [{
     "id": "BtnConnaissance"
 }];
 let idDefini = false;
-
+var streamLocal;
 
 function JeSuisLanceur(mode) {
     //let iddMoi = document.getElementById('SaisieIDd').value; ct pour choisir son id lol
@@ -25,24 +26,26 @@ function JeSuisLanceur(mode) {
         port: SignalingHost["port"],
         path: SignalingHost["path"]
     });
+    let newQR = () => new QRCode(document.getElementById("qrcode"), {
+        text: "https://ecoute.app/" + String(idMoi),
+        width: 80,
+        height: 80,
+        colorLight: "#eeeeee"
+    });
 
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + String(id));
         idMoi = String(id);
         document.getElementById("monIdFrr").innerHTML = idMoi;
-        new QRCode(document.getElementById("qrcode"), {
-            text: idMoi,
-            width: 80,
-            height: 80,
-            colorLight: "#eeeeee"
-        });
-        document.querySelector("#connexStat").innerHTML = "Connecté <span style='color:green;'>&#10004;</span>"
-        document.querySelector("#connexStat").style.animation = "none";
+        uiConnex("connecte")
         idDefini = true;
+        newQR()
     });
     if (idMoi != "") {
         document.getElementById("monIdFrr").innerHTML = idMoi;
     }
+
+    if (idDefini == true) newQR()
 
     peer.on('error', err => {
         console.log(err)
@@ -61,37 +64,44 @@ function JeSuisLanceur(mode) {
     });
 
     peer.on('call', function (appel_entrant) {
-        console.log("appel entrant!");
         call = appel_entrant;
-        call.on('stream', function (streamOfPeer) {
-            videoDiv = document.getElementById("vidFeedback");
-            videoDiv.style.display = "block";
-            videoDiv.srcObject = streamOfPeer;
-            videoDiv.play();
-        });
-        call.answer();
+        paramCall();
+        call.answer(streamLocal);
+        
     });
     localStorage.removeItem('codeAmi');
+}
+
+function paramCall(){
+    call.on('stream', function (streamOfPeer) {
+        videoDiv = document.getElementById("vidFeedback");
+        videoDiv.srcObject = streamOfPeer;
+        video.addEventListener('loadedmetadata', () => {
+            videoDiv.play();
+        })
+        videoDiv.style.display = "block";
+    });
 }
 
 function Connexion() {
     let iddContact = document.getElementById('IdDuContact').value;
     conn = peer.connect(iddContact);
     idAutre = iddContact;
-    paramConn()
+    paramConn();
 }
 
 function paramConn() {
     conn.on('data', function (data) {
-        divSms = document.querySelector("#smsContainer")
+        divSms = document.querySelector("#smsContainer");
         divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(data) + "</div>");
         divSms.scrollTop = divSms.scrollHeight;
     });
     conn.on('close', function (data) {
-        swal("Info", "L'un de vous s'est deconnecté.")
-        changementDeMenu(fakeBtnMenu[0])
+        swal("Fin de l'appel.");
+        changementDeMenu(fakeBtnMenu[0]);
+        streamLocal.getTracks().forEach(track => track.stop());
     });
-    changementDeMenu(fakeBtnMenu[1])
+    changementDeMenu(fakeBtnMenu[1]);
 }
 
 function SendMessage() {
@@ -105,15 +115,22 @@ function SendMessage() {
 
 function CallDude() {
     navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: {
+                frameRate: {
+                    ideal: 10,
+                    max: 15
+                },
+                width: 500,
+                height: 500
+            },
             audio: false
         }).then(function (stream) {
-            console.log("lancement appel... a " + String(idAutre));
-            call = peer.call(idAutre, stream);
+            streamLocal = stream;
+            call = peer.call(idAutre, streamLocal);
+            paramCall();
         })
         .catch(function (err) {
             console.log(err);
-            swal("Faudra activer ta cam pour lancer l'appel.");
         });
 }
 
@@ -124,7 +141,7 @@ var dicoZones = {
 
     'BtnParam': "<div style='padding: 10px; max-width:550px;'><h4>Ecoute.app</h4><p><strong>Ecoute</strong> est entièrement libre d'utilisation et fonctionne entièrement sans utiliser tes données.<br>C'est comme utiliser un <strong>talkie-walkie</strong> sous stéroïdes. Utilise le sans modération. Tout ce qui se passe ici reste entre toi et ton interlocuteur. </p><p>-B</p></div>",
 
-    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col-10" type="text" placeholder="Son nom..." id="IdDuContact"><button class="col-2" id="qrBtn" onClick="lancementCameraQR();">📸</button></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
+    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col-10" type="text" placeholder="Son nom..." id="IdDuContact"><button class="col-2" id="qrBtn" onClick="lancementCameraQR();"><img src="assets/miniqr.svg" class="qrlogo"></button></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
     'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><video id="vidFeedback" width="100%"></video><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
 }
@@ -136,11 +153,12 @@ function changementDeMenu(bouton) {
     let zoneParamID = document.getElementById("zonePrincipalee");
     let zoneBoutons = document.querySelector("#boutonsMenu");
     let flecheRetour = document.querySelector("#returnArrow");
+    uiConnex("hide")
     if (idMoi == "" && document.querySelector("#inputChanmax").value != "") {
         idMoi = String(document.querySelector("#inputChanmax").value) + '-' + String(Math.floor(Math.random() * 100));
         localStorage.setItem("pseudoAvant", document.querySelector("#inputChanmax").value)
     }
-    if (String(dicoZones[bouton.id]).trim() != String(zoneParamID.innerHTML).trim()) {
+    if (lastPressed != bouton.id) {
         zoneParamID.style.transform = "rotateX(-90deg)";
         if (bouton.id == "BtnUIMessages") {
             zoneBoutons.style.transform = "translateY(50vh)";
@@ -155,7 +173,6 @@ function changementDeMenu(bouton) {
                 zoneParamID.style.height = "92%";
                 zoneBoutons.style.display = "none";
                 flecheRetour.style.transform = "translateX(0)";
-                document.querySelector("#connexStat").style.display = "none";
                 document.querySelector("#titreConv").innerHTML = "✉️ " + String(idAutre)
                 document.querySelector('#idmsgAEnvoyer').addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
@@ -165,9 +182,9 @@ function changementDeMenu(bouton) {
             } else {
                 flecheRetour.style.transform = "translateX(50px)";
                 zoneBoutons.style.transform = "translateY(0vh)"
-                document.querySelector("#connexStat").style.display = "block";
             }
             if (bouton.id == "BtnConnaissance") {
+                uiConnex("on")
                 document.querySelector('#IdDuContact').addEventListener('keypress', function (e) {
                     if (document.querySelector('#IdDuContact').value != '' && idDefini == true) {
                         let boutonConnex = document.querySelector("#btn-connex")
@@ -176,16 +193,17 @@ function changementDeMenu(bouton) {
                     }
                 });
                 if (localStorage.getItem("codeAmi") != null) document.querySelector("#IdDuContact").value = idAutre;
-                document.querySelector("#connexStat").style.display = "block";
                 JeSuisLanceur(bouton.id)
             }
         }, 400);
+        lastPressed = bouton.id;
     } else {
         zoneParamID.style.transform = "rotateX(-90deg)";
         setTimeout(() => {
             zonePrincipalee.innerHTML = dicoZones["returnArrow"];
             zoneParamID.style.transform = "rotateX(0deg)";
         }, 400);
+        lastPressed = "none";
     }
     setTimeout(() => {
         if (document.querySelector("#inputChanmax") != null) document.querySelector("#inputChanmax").value = localStorage.getItem("pseudoAvant");
@@ -199,3 +217,14 @@ if (localStorage.getItem("codeAmi") != null) {
     changementDeMenu(fakeBtnMenu[2]);
     document.querySelector("#boutonsMenu").style.transform = "translateY(50vh)";
 };
+
+function uiConnex(param) {
+    if (param == "on") {
+        document.querySelector("#connexStat").style.display = "block";
+    } else if (param == "hide") {
+        document.querySelector("#connexStat").style.display = "none";
+    } else if (param == "connecte") {
+        document.querySelector("#connexStat").innerHTML = "Connecté <span style='color:green;'>&#10004;</span>"
+        document.querySelector("#connexStat").style.animation = "none";
+    }
+}

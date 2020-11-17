@@ -103,7 +103,7 @@ body {
     border-radius: 3px;
     background-color: #ececec;
     border-width: 0px;
-    padding: 10px;
+    padding: 4px;
 }
 
 #smsContainer {
@@ -125,12 +125,12 @@ body {
 #cameraDiv {
     position: absolute;
     width: 88vw;
+    max-width: 600px;
     height: auto;
-    background-color: black;
-    z-index: 2002;
+    bottom: 30px;
     left: 50%;
-    bottom: 0px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0%);
+    z-index: 2002;
     display: none;
     box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
 }
@@ -182,4 +182,21 @@ hr {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 50%;
+}
+
+.qrlogo {
+    height: 25px;
+    opacity: .8;
+}
+
+.clsbtnCam {
+    position: absolute;
+    cursor: pointer;
+    top: 5px;
+    right: 5px;
+    border-radius: 10px;
+    background-color: #fdfdfd;
+    padding: 3px 8px;
+    font-size: 12px;
+    opacity: .6;
 }
