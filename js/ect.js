@@ -1,3 +1,9 @@
+//Service Worker Section
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+// end SW 
+
 var lastPressed;
 var peer;
 var conn;
@@ -67,12 +73,12 @@ function JeSuisLanceur(mode) {
         call = appel_entrant;
         paramCall();
         call.answer(streamLocal);
-        
+
     });
     localStorage.removeItem('codeAmi');
 }
 
-function paramCall(){
+function paramCall() {
     call.on('stream', function (streamOfPeer) {
         videoDiv = document.getElementById("vidFeedback");
         videoDiv.srcObject = streamOfPeer;
