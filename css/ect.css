@@ -46,6 +46,7 @@ body {
 .zonePrincipale {
     background-color: #eeeeee;
     height: 60%;
+    max-width: 800px;
     padding: 20px;
     margin: 0px 20px;
     border-radius: 5px;
@@ -75,6 +76,16 @@ body {
 
 #monIdFrr {
     color: #5770BE;
+    text-decoration: dotted;
+    cursor: pointer;
+    border-radius: 6px;
+    border-width: 0px;
+    padding: 4px 10px;
+    background-color: white;
+}
+.shyUrl{
+    opacity: .3;
+    color: black;
 }
 
 .inputEcoute {
@@ -93,11 +104,6 @@ body {
     font-size: medium;
 }
 
-#qrcode {
-    border-radius: 6px;
-    border-width: 2px;
-    border-color: #5770BE;
-}
 
 #qrBtn {
     border-radius: 3px;
@@ -184,11 +190,6 @@ hr {
     background-position: 50% 50%;
 }
 
-.qrlogo {
-    height: 25px;
-    opacity: .8;
-}
-
 .clsbtnCam {
     position: absolute;
     cursor: pointer;
@@ -199,4 +200,9 @@ hr {
     padding: 3px 8px;
     font-size: 12px;
     opacity: .6;
+}
+
+.convVideo{
+    width: 100%;
+    display: none;
 }

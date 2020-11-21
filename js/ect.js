@@ -42,13 +42,13 @@ function JeSuisLanceur(mode) {
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + String(id));
         idMoi = String(id);
-        document.getElementById("monIdFrr").innerHTML = idMoi;
+        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         uiConnex("connecte")
         idDefini = true;
         newQR()
     });
     if (idMoi != "") {
-        document.getElementById("monIdFrr").innerHTML = idMoi;
+        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
     }
 
     if (idDefini == true) newQR()
@@ -80,11 +80,9 @@ function JeSuisLanceur(mode) {
 
 function paramCall() {
     call.on('stream', function (streamOfPeer) {
-        videoDiv = document.getElementById("vidFeedback");
+        let videoDiv = document.getElementById("vidYou");
         videoDiv.srcObject = streamOfPeer;
-        videoDiv.addEventListener('loadedmetadata', () => {
-            videoDiv.play();
-        })
+        videoDiv.play();
         videoDiv.style.display = "block";
     });
 }
@@ -131,7 +129,12 @@ function CallDude() {
             },
             audio: false
         }).then(function (stream) {
+            swal("appel lancé !")
             streamLocal = stream;
+            let videoDiv = document.getElementById("vidMe");
+            videoDiv.srcObject = stream;
+            videoDiv.play();
+            videoDiv.style.display = "block";
             call = peer.call(idAutre, streamLocal);
             paramCall();
         })
@@ -147,9 +150,9 @@ var dicoZones = {
 
     'BtnParam': "<div style='padding: 10px; max-width:550px;'><h4>Ecoute.app</h4><p><strong>Ecoute</strong> est entièrement libre d'utilisation et fonctionne entièrement sans utiliser tes données.<br>C'est comme utiliser un <strong>talkie-walkie</strong> sous stéroïdes. Utilise le sans modération. Tout ce qui se passe ici reste entre toi et ton interlocuteur. </p><p>-B</p></div>",
 
-    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
+    'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><video id="vidFeedback" width="100%"></video><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><row><video class="col convVideo" id="vidMe"></video><video class="col convVideo" id="vidYou" ></video></row><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -168,6 +171,7 @@ function changementDeMenu(bouton) {
         zoneParamID.style.transform = "rotateX(-90deg)";
         if (bouton.id == "BtnUIMessages") {
             zoneBoutons.style.transform = "translateY(50vh)";
+            zoneParamID.style.margin = "0px";
         } else {
             zoneParamID.style.height = "60vh";
             zoneBoutons.style.display = "";
@@ -176,7 +180,8 @@ function changementDeMenu(bouton) {
             zonePrincipalee.innerHTML = dicoZones[bouton.id];
             zoneParamID.style.transform = "rotateX(0deg)";
             if (bouton.id == "BtnUIMessages") {
-                zoneParamID.style.height = "92%";
+                zoneParamID.style.height = "100vh";
+                zoneParamID.style.width = "100vw";
                 zoneBoutons.style.display = "none";
                 flecheRetour.style.transform = "translateX(0)";
                 document.querySelector("#titreConv").innerHTML = "✉️ " + String(idAutre)
@@ -186,6 +191,8 @@ function changementDeMenu(bouton) {
                     }
                 });
             } else {
+                zoneParamID.style.width = "auto";
+                zoneParamID.style.margin = "0px 20px";
                 flecheRetour.style.transform = "translateX(50px)";
                 zoneBoutons.style.transform = "translateY(0vh)"
             }
@@ -237,4 +244,16 @@ function uiConnex(param) {
         document.querySelector("#connexStat").innerHTML = "Connecté <span style='color:green;'>&#10004;</span>"
         document.querySelector("#connexStat").style.animation = "none";
     }
+}
+
+
+function copyToClipboard() {
+    var dummy = document.createElement("textarea");
+    // dummy.style.display = 'none'
+    document.body.appendChild(dummy);
+    //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+    dummy.value = String("ecoute.app/" + idMoi);
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
 }
