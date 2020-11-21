@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
   <meta name="description" content="ecoute.app">
   <meta name="author" content="Baudouin Arbarétier">
   <title>Ecoute</title>
@@ -19,16 +19,6 @@
 <body>
   <!-- particles.js container -->
   <div id="particles-js"></div>
-  <div id="cameraDiv">
-    <span class="clsbtnCam"
-      onclick="streaam.getTracks().forEach(track => track.stop()); this.parentElement.style.display = 'none'">X</span>
-    <div id="loadingMessage">Autorise l'accés à ta caméra pour lire un code QR.</div>
-    <canvas style="width: 100%;" id="canvas" hidden></canvas>
-    <div id="output" hidden>
-      <div id="outputMessage">No QR code detected.</div>
-      <div hidden><b>Data:</b> <span id="outputData"></span></div>
-    </div>
-  </div>
   <div class="container MainContainerStyle" id="mainContainer">
     <span style="position: absolute; opacity: .3;top: 2px; left:2px;">4.5</span>
     <span id="connexStat">Connexion...</span>
@@ -63,8 +53,6 @@
   <script src="js/ect.js"></script>
   <script src="js/adapter.min.js"></script>
   <script src="js/qrcode.js"></script>
-  <script src="js/jsQR.min.js"></script>
-  <script src="js/qrreader.js"></script>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 

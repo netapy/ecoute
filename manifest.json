@@ -1,6 +1,6 @@
 {
-    "name": "Ecoute.app",
-    "short_name": "Ecoute.app",
+    "name": "Ecoute",
+    "short_name": "Ecoute",
     "start_url": "index.html",
     "scope": "./",
     "icons": [{

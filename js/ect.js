@@ -82,7 +82,7 @@ function paramCall() {
     call.on('stream', function (streamOfPeer) {
         videoDiv = document.getElementById("vidFeedback");
         videoDiv.srcObject = streamOfPeer;
-        video.addEventListener('loadedmetadata', () => {
+        videoDiv.addEventListener('loadedmetadata', () => {
             videoDiv.play();
         })
         videoDiv.style.display = "block";
@@ -147,7 +147,7 @@ var dicoZones = {
 
     'BtnParam': "<div style='padding: 10px; max-width:550px;'><h4>Ecoute.app</h4><p><strong>Ecoute</strong> est entièrement libre d'utilisation et fonctionne entièrement sans utiliser tes données.<br>C'est comme utiliser un <strong>talkie-walkie</strong> sous stéroïdes. Utilise le sans modération. Tout ce qui se passe ici reste entre toi et ton interlocuteur. </p><p>-B</p></div>",
 
-    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col-10" type="text" placeholder="Son nom..." id="IdDuContact"><button class="col-2" id="qrBtn" onClick="lancementCameraQR();"><img src="assets/miniqr.svg" class="qrlogo"></button></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
+    'BtnConnaissance': '<h4>Toi :</h4><span id="monIdFrr"></span><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
     'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><video id="vidFeedback" width="100%"></video><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
 }
@@ -191,14 +191,18 @@ function changementDeMenu(bouton) {
             }
             if (bouton.id == "BtnConnaissance") {
                 uiConnex("on")
+                let boutonConnex = document.querySelector("#btn-connex")
                 document.querySelector('#IdDuContact').addEventListener('keypress', function (e) {
                     if (document.querySelector('#IdDuContact').value != '' && idDefini == true) {
-                        let boutonConnex = document.querySelector("#btn-connex")
                         boutonConnex.style.backgroundColor = "#5770BE";
                         boutonConnex.disabled = false;
                     }
                 });
-                if (localStorage.getItem("codeAmi") != null) document.querySelector("#IdDuContact").value = idAutre;
+                if (localStorage.getItem("codeAmi") != null) {
+                    document.querySelector("#IdDuContact").value = idAutre;
+                    boutonConnex.style.backgroundColor = "#5770BE";
+                    boutonConnex.disabled = false;
+                }
                 JeSuisLanceur(bouton.id)
             }
         }, 400);
