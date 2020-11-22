@@ -26,7 +26,6 @@ let idDefini = false;
 var streamLocal;
 
 function JeSuisLanceur(mode) {
-    //let iddMoi = document.getElementById('SaisieIDd').value; ct pour choisir son id lol
     if (idDefini == false) peer = new Peer(idMoi, {
         host: SignalingHost["host"],
         port: SignalingHost["port"],
@@ -152,7 +151,7 @@ var dicoZones = {
 
     'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><row><video class="col convVideo" id="vidMe"></video><video class="col convVideo" id="vidYou" ></video></row><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage()">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><row><video class="col convVideo" id="vidMe" playsinline></video><video class="col convVideo" id="vidYou" playsinline></video></row><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
