@@ -44,12 +44,9 @@ var precacheConfig = [
   ["assets/logo2.svg", "e11b565abdc7a890ead1a4e4552baf3f"],
   ["assets/logo3solo.svg", "40a97e06cc0d73ec00d61fe7c823dcdb"],
   ["assets/logo512.png", "0572c4448fd53547902e25182a86728b"],
-  ["assets/miniqr.svg", "7d1f865c9a831583e4aec97b4728f1b8"],
   ["js/adapter.min.js", "1f180b96bce4a5aa979b38be73248561"],
-  ["js/jsQR.min.js", "8af00ac6d8f4454fa2e1a698d55542fa"],
   ["js/peerjs.min.js", "fa66773008ca64a5ca41e8d9d4e9e963"],
   ["js/qrcode.js", "517b55d3688ce9ef1085a3d9632bcb97"],
-  ["js/qrreader.js", "e8e48c86ec004748069265cd7dbb3cdf"],
   ["js/simplepeer.min.js", "41ef33dffe8ad96af107e4d679fb28de"],
   ["manifest.json", "ec81f40ecbc75a151afcb4b1be6c34f6"]
 ];

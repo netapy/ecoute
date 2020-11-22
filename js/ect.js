@@ -173,14 +173,14 @@ function changementDeMenu(bouton) {
             zoneBoutons.style.transform = "translateY(50vh)";
             zoneParamID.style.margin = "0px";
         } else {
-            zoneParamID.style.height = "60vh";
+            zoneParamID.style.height = "65%";
             zoneBoutons.style.display = "";
         }
         setTimeout(() => { //to wait for animation heheh
             zonePrincipalee.innerHTML = dicoZones[bouton.id];
             zoneParamID.style.transform = "rotateX(0deg)";
             if (bouton.id == "BtnUIMessages") {
-                zoneParamID.style.height = "100vh";
+                zoneParamID.style.height = "100%";
                 zoneParamID.style.width = "100vw";
                 zoneBoutons.style.display = "none";
                 flecheRetour.style.transform = "translateX(0)";

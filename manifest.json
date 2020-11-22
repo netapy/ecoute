@@ -16,5 +16,13 @@
     ],
     "theme_color": "#5770BE",
     "background_color": "#FDFDFD",
-    "display": "standalone"
+    "display": "standalone",
+    "permissions": {
+        "audio-capture": {
+            "description": "Required to capture audio using getUserMedia()"
+        },
+        "video-capture": {
+            "description": "Required to capture video using getUserMedia()"
+        }
+    }
 }
