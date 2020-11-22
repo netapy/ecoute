@@ -190,3 +190,18 @@ hr {
     width: 100%;
     display: none;
 }
+
+#vidMe{
+    border-width: 3px;
+    border-radius: 5px;
+    border-color: #5770BE;
+    border-style: solid;
+    border-top-width:0px;
+}
+#vidYou{
+    border-width: 3px;
+    border-radius: 5px;
+    border-color: #FF8D7E;
+    border-style: solid;
+    border-bottom-width:0px;
+}
