@@ -82,8 +82,15 @@ function paramCall() {
         let videoDiv = document.getElementById("vidYou");
         videoDiv.srcObject = streamOfPeer;
         videoDiv.play();
-        videoDiv.style.display = "block";
+        document.getElementsByClassName("vidCont")[0].style.display = "block"; //1 = me
     });
+}
+
+function clsCall() {
+    streamLocal.getTracks().forEach(track => track.stop());
+    document.querySelector("#callBtn").style.display = "block";
+    document.getElementsByClassName("vidCont")[1].style.display = "none";
+    call.close(); //MEERDE CA LE FERME AUSSI POUR L'AUTRE :)
 }
 
 function Connexion() {
@@ -100,7 +107,6 @@ function paramConn() {
         divSms.scrollTop = divSms.scrollHeight;
     });
     conn.on('close', function (data) {
-        swal("Fin de l'appel.");
         changementDeMenu(fakeBtnMenu[0]);
         streamLocal.getTracks().forEach(track => track.stop());
     });
@@ -128,12 +134,12 @@ function CallDude() {
             },
             audio: false
         }).then(function (stream) {
-            swal("appel lancé !")
             streamLocal = stream;
             let videoDiv = document.getElementById("vidMe");
             videoDiv.srcObject = stream;
             videoDiv.play();
-            videoDiv.style.display = "block";
+            document.getElementsByClassName("vidCont")[1].style.display = "block"; //1 = me
+            document.querySelector("#callBtn").style.display = "none";
             call = peer.call(idAutre, streamLocal);
             paramCall();
         })
@@ -151,7 +157,7 @@ var dicoZones = {
 
     'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6"><video class="convVideo" id="vidMe" playsinline></video></div></div><button class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div id="smsContainer"></div><span><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -179,7 +185,7 @@ function changementDeMenu(bouton) {
             zonePrincipalee.innerHTML = dicoZones[bouton.id];
             zoneParamID.style.transform = "rotateX(0deg)";
             if (bouton.id == "BtnUIMessages") {
-                zoneParamID.style.height = "100%";
+                zoneParamID.style.height = "100vh";
                 zoneParamID.style.width = "100vw";
                 zoneBoutons.style.display = "none";
                 flecheRetour.style.transform = "translateX(0)";
@@ -255,4 +261,14 @@ function copyToClipboard() {
     dummy.select();
     document.execCommand("copy");
     document.body.removeChild(dummy);
+}
+
+function affCachTxtDivs(choix) {
+    document.querySelectorAll('.txtDiv').forEach(function (el) {
+        if (choix == "cache") {
+            el.style.display = 'none';
+        } else if(choix=="montre") {
+            el.style.display = 'block';
+        }
+    });
 }

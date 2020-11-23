@@ -67,7 +67,8 @@ body {
     padding: 4px 10px;
     background-color: white;
 }
-.shyUrl{
+
+.shyUrl {
     opacity: .3;
     color: black;
 }
@@ -87,7 +88,6 @@ body {
     color: white;
     font-size: medium;
 }
-
 
 #qrBtn {
     border-radius: 3px;
@@ -178,30 +178,48 @@ hr {
     position: absolute;
     cursor: pointer;
     top: 5px;
-    right: 5px;
-    border-radius: 10px;
-    background-color: #fdfdfd;
+    border-radius: 5px;
+    background-color: #5770BE;
     padding: 3px 8px;
-    font-size: 12px;
-    opacity: .6;
+    font-size: 16px;
+    opacity: .9;
+    z-index: 999;
 }
 
-.convVideo{
-    width: 100%;
-    display: none;
+.convVideo {
+    width: 90%;
 }
 
-#vidMe{
+#vidMe {
     border-width: 3px;
     border-radius: 5px;
     border-color: #5770BE;
+    background-color: #5770BE;
     border-style: solid;
-    border-top-width:0px;
+    width: 90%;
 }
-#vidYou{
+
+@media (min-aspect-ratio: 1/2) and (max-width: 768px) {
+    #vidMe {
+        width: 60%;
+    }
+}
+
+@media (min-aspect-ratio: 2/5) and (max-width: 767px) {
+    .txtDiv {
+        display: none
+    }
+}
+
+#vidYou {
     border-width: 3px;
     border-radius: 5px;
     border-color: #FF8D7E;
+    background-color: #FF8D7E;
     border-style: solid;
-    border-bottom-width:0px;
+}
+
+.vidCont {
+    padding: 5px;
+    display: none;
 }
