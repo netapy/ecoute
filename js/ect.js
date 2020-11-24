@@ -3,7 +3,6 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
 // end SW 
-
 var lastPressed;
 var peer;
 var conn;
@@ -24,8 +23,23 @@ let fakeBtnMenu = [{
 }];
 let idDefini = false;
 var streamLocal;
+var twocall;
+var displHelp = true;
 
 function JeSuisLanceur(mode) {
+    if (displHelp) {
+        swal("", "Voici ton lien et ton code QR. \nEnvoi simplement un des deux à ton contact.\n\n Il n'aura plus qu'à cliquer sur \"Connexion\", et vous serez mis en relation !", "info", {
+                buttons: {
+                    yes: "Okk!"
+                },
+            })
+            .then((value) => {
+                switch (value) {
+                    case "yes":
+                        displHelp = false;
+                }
+            });
+    }
     if (idDefini == false) peer = new Peer(idMoi, {
         host: SignalingHost["host"],
         port: SignalingHost["port"],
@@ -41,9 +55,9 @@ function JeSuisLanceur(mode) {
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + String(id));
         idMoi = String(id);
-        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         uiConnex("connecte")
         idDefini = true;
+        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         newQR()
     });
     if (idMoi != "") {
@@ -79,18 +93,22 @@ function JeSuisLanceur(mode) {
 
 function paramCall() {
     call.on('stream', function (streamOfPeer) {
+        affCachTxtDivs("masquer");
         let videoDiv = document.getElementById("vidYou");
         videoDiv.srcObject = streamOfPeer;
         videoDiv.play();
         document.getElementsByClassName("vidCont")[0].style.display = "block"; //1 = me
     });
+    call.on('close', function () {
+        affCachTxtDivs("afficher");
+    })
 }
 
 function clsCall() {
     streamLocal.getTracks().forEach(track => track.stop());
     document.querySelector("#callBtn").style.display = "block";
     document.getElementsByClassName("vidCont")[1].style.display = "none";
-    call.close(); //MEERDE CA LE FERME AUSSI POUR L'AUTRE :)
+    //call.close(); //MEERDE CA LE FERME AUSSI POUR L'AUTRE :)
 }
 
 function Connexion() {
@@ -129,11 +147,12 @@ function CallDude() {
                     ideal: 10,
                     max: 15
                 },
-                width: 500,
-                height: 500
+                width: 480,
+                height: 480
             },
-            audio: false
+            audio: true
         }).then(function (stream) {
+            affCachTxtDivs("masquer");
             streamLocal = stream;
             let videoDiv = document.getElementById("vidMe");
             videoDiv.srcObject = stream;
@@ -157,7 +176,7 @@ var dicoZones = {
 
     'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">Appeler ce contact</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">Appel vidéo</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -263,12 +282,16 @@ function copyToClipboard() {
     document.body.removeChild(dummy);
 }
 
+
+var borderStyleSheet = document.createElement("style");
+document.head.appendChild(borderStyleSheet);
+borderStyleSheet.sheet.insertRule("@media (min-aspect-ratio: 2/5) and (max-width: 767px) {.txtDiv{display: none}}", 0);
+
 function affCachTxtDivs(choix) {
-    document.querySelectorAll('.txtDiv').forEach(function (el) {
-        if (choix == "cache") {
-            el.style.display = 'none';
-        } else if(choix=="montre") {
-            el.style.display = 'block';
-        }
-    });
+    if (choix == "masquer") {
+        borderStyleSheet.disabled = false;
+    } else {
+        borderStyleSheet.disabled = true;
+    }
 }
+affCachTxtDivs("afficher");

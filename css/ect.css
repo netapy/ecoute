@@ -205,11 +205,6 @@ hr {
     }
 }
 
-@media (min-aspect-ratio: 2/5) and (max-width: 767px) {
-    .txtDiv {
-        display: none
-    }
-}
 
 #vidYou {
     border-width: 3px;
