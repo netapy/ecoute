@@ -205,6 +205,13 @@ hr {
     }
 }
 
+.buttonEct {
+    padding: 5px;
+    border-radius: 7px;
+    border-width: 0px;
+    color: #5770BE;
+    text-decoration: underline;
+}
 
 #vidYou {
     border-width: 3px;
@@ -217,4 +224,10 @@ hr {
 .vidCont {
     padding: 5px;
     display: none;
+}
+
+.pictoEct {
+    height: 25px;
+    margin: 0px 10px;
+    opacity: .7;
 }

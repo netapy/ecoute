@@ -24,7 +24,7 @@ let fakeBtnMenu = [{
 let idDefini = false;
 var streamLocal;
 var twocall;
-var displHelp = true;
+var displHelp = false;
 
 function JeSuisLanceur(mode) {
     if (displHelp) {
@@ -55,10 +55,10 @@ function JeSuisLanceur(mode) {
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + String(id));
         idMoi = String(id);
-        uiConnex("connecte")
+        uiConnex("connecte");
         idDefini = true;
         document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
-        newQR()
+        newQR();
     });
     if (idMoi != "") {
         document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
@@ -68,6 +68,9 @@ function JeSuisLanceur(mode) {
 
     peer.on('error', err => {
         console.log(err)
+        if (err.type == 'peer-unavailable') swal('Désolé', "L'utilisateur n'existe pas ou n'est pas connecté.", 'error').then((value) => {
+            changementDeMenu(fakeBtnMenu[0]);
+        });
     });
 
     peer.on('connection', function (cc) {
@@ -108,6 +111,7 @@ function clsCall() {
     streamLocal.getTracks().forEach(track => track.stop());
     document.querySelector("#callBtn").style.display = "block";
     document.getElementsByClassName("vidCont")[1].style.display = "none";
+    affCachTxtDivs("afficher");
     //call.close(); //MEERDE CA LE FERME AUSSI POUR L'AUTRE :)
 }
 
@@ -128,6 +132,7 @@ function paramConn() {
         changementDeMenu(fakeBtnMenu[0]);
         streamLocal.getTracks().forEach(track => track.stop());
     });
+    lastPressed = "none";
     changementDeMenu(fakeBtnMenu[1]);
 }
 
@@ -176,7 +181,7 @@ var dicoZones = {
 
     'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">Appel vidéo</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" muted playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">📷 Appel vidéo</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
