@@ -70,6 +70,7 @@ function JeSuisLanceur(mode) {
         console.log(err)
         if (err.type == 'peer-unavailable') swal('Désolé', "L'utilisateur n'existe pas ou n'est pas connecté.", 'error').then((value) => {
             changementDeMenu(fakeBtnMenu[0]);
+            streamLocal.getTracks().forEach(track => track.stop());
         });
     });
 
@@ -181,7 +182,7 @@ var dicoZones = {
 
     'BtnConnaissance': '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
 
-    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" muted playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">📷 Appel vidéo</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();">&#10148;</button></span></div>',
+    'BtnUIMessages': '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" muted playsinline></video></div></div><button id="callBtn" class="buttonEct" onclick="CallDude()">📷 Appel vidéo</button><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();"><img src="assets/send.svg"></button></span></div>',
 }
 
 document.getElementById("zonePrincipalee").innerHTML = dicoZones["returnArrow"];
@@ -275,7 +276,6 @@ function uiConnex(param) {
     }
 }
 
-
 function copyToClipboard() {
     var dummy = document.createElement("textarea");
     // dummy.style.display = 'none'
@@ -286,7 +286,6 @@ function copyToClipboard() {
     document.execCommand("copy");
     document.body.removeChild(dummy);
 }
-
 
 var borderStyleSheet = document.createElement("style");
 document.head.appendChild(borderStyleSheet);
@@ -300,3 +299,25 @@ function affCachTxtDivs(choix) {
     }
 }
 affCachTxtDivs("afficher");
+
+function closeBackToMenu(btn) {
+    swal("T'es sûr de vouloir quitter la conv ?", {
+            buttons: {
+                cancel: "Nan!",
+                defeat: "Oui",
+            },
+        })
+        .then((value) => {
+            switch (value) {
+                case "defeat":
+                    try {
+                        streamLocal.getTracks().forEach(track => track.stop());
+                    } catch (err) {};
+                    changementDeMenu(btn);
+                    peer.destroy();
+                    break;
+                default:
+                    break;
+            }
+        });
+}
