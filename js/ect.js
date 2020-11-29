@@ -131,7 +131,9 @@ function paramConn() {
     });
     conn.on('close', function (data) {
         changementDeMenu(fakeBtnMenu[0]);
-        streamLocal.getTracks().forEach(track => track.stop());
+        try {
+            streamLocal.getTracks().forEach(track => track.stop());
+        } catch (err) {}
     });
     lastPressed = "none";
     changementDeMenu(fakeBtnMenu[1]);
