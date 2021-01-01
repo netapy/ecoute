@@ -102,7 +102,7 @@ function CallDude(e) {
     navigator.mediaDevices.getUserMedia({
         video: paramVid,
         audio: !0
-    }).then((function (e) {
+    }).then((function (e) { 
         affCachTxtDivs("masquer"), streamLocal = e;
         let t = document.getElementById("vidMe");
         t.srcObject = e, t.play(), document.getElementsByClassName("vidCont")[1].style.display = "block", document.querySelector("#callBtn").style.display = "none", call = peer.call(idAutre, streamLocal), paramCall()
