@@ -203,5 +203,3 @@ function closeBackToMenu(e) {
     })
 }
 document.head.appendChild(borderStyleSheet), borderStyleSheet.sheet.insertRule("@media (min-aspect-ratio: 2/5) and (max-width: 767px) {.txtDiv{display: none}}", 0), affCachTxtDivs("afficher");
-
-changementDeMenu(fakeBtnMenu[1]);
