@@ -144,15 +144,21 @@ var dicoZones = {
     BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Mode productif en construction.',
     BtnParam: "<div style='padding: 10px; max-width:550px;'><h5>Ecoute,</h5><p>Dès l'instant où la connexion est établie entre vous, plus rien n'existe en dehors de votre conversation. <br>Pas de serveurs, publicités, trackers... Rien.<br>Lorsque tout disparaît, il ne reste plus que vous, votre parole et votre <strong>écoute.</strong></p><p>Profitez, personne ne vous regarde.</p><p>-B</p></div>",
     BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
-<<<<<<< Updated upstream
-    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="row"><div class="col-md-6 text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="col-md-6 text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" muted playsinline></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel audio</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
-=======
-    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"><div class=" text-center vidCont"><video class="convVideo" id="vidYou" playsinline></video></div><div class="text-center vidCont"><span class="clsbtnCam" onclick="clsCall()">x</span><video class="convVideo" id="vidMe" muted playsinline></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel audio</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
->>>>>>> Stashed changes
+    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="newVidChat()">📞 Appel audio</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
 const newVidChat = () => {
-    
+    document.querySelector(".convVidContainer").insertAdjacentHTML("afterbegin", "<div class='vidbloc'><img id='min' onclick='vidFullScreen(this)' src='assets/0.jfif'/></div>")
+}
+
+const vidFullScreen = (el) => {
+    if (el.id == "min") {
+        el.style = "position: absolute; height: 100vw; width: auto; z-index:999; box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);  top: 50%; left: 50%; transform: translate(-50%, -50%);";
+        el.id = "hii";
+    } else {
+        el.style = '';
+        el.id = 'min';
+    }
 }
 
 function changementDeMenu(e) {
@@ -215,8 +221,4 @@ function closeBackToMenu(e) {
 }
 document.head.appendChild(borderStyleSheet), borderStyleSheet.sheet.insertRule("@media (min-aspect-ratio: 2/5) and (max-width: 767px) {.txtDiv{display: none}}", 0), affCachTxtDivs("afficher");
 
-<<<<<<< Updated upstream
-changementDeMenu(fakeBtnMenu[1]);
-=======
 changementDeMenu(fakeBtnMenu[1])
->>>>>>> Stashed changes
