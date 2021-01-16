@@ -175,6 +175,7 @@
  }
 
  #smsContainer {
+     min-height: 40px;
      background-color: #efefefbe;
      width: 100%;
      border-radius: 6px;
@@ -283,25 +284,6 @@
      z-index: 999
  }
 
- .convVideo {
-     width: 90%;
- }
-
- #vidMe {
-     border-width: 3px;
-     border-radius: 5px;
-     border-color: #5770BE;
-     background-color: #5770BE;
-     border-style: solid;
-     width: 90%;
- }
-
- @media (min-aspect-ratio:1/2) and (max-width:768px) {
-     #vidMe {
-         width: 60%
-     }
- }
-
  .buttonEct {
      padding: 5px;
      border-radius: 7px;
@@ -311,17 +293,11 @@
      background-color: transparent
  }
 
- #vidYou {
-     border-width: 3px;
-     border-radius: 5px;
-     border-color: #FF8D7E;
-     background-color: #FF8D7E;
-     border-style: solid
- }
-
- .vidCont {
-     padding: 5px;
-     display: none
+ .convVidContainer {
+     display: grid;
+     grid-gap: 5px;
+     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+     overflow-y: scroll;
  }
 
  .pictoEct {
@@ -335,4 +311,21 @@
      animation: wiggle 5s cubic-bezier(0, .5, .5, 1) infinite;
      -webkit-animation-delay: 1.5s;
      animation-delay: 1.5s
+ }
+
+
+ .vidbloc {
+     opacity: 1;
+ }
+
+ .vidbloc video {
+     width: 100%;
+     height: 100%;
+     transition: all .1s cubic-bezier(.25, .8, .25, 1);
+     max-width: 500px;
+     max-height: 500px;
+ }
+
+ #ait-sm-ee {
+     padding: 15px;
  }
