@@ -229,4 +229,4 @@ function closeBackToMenu(e) {
     })
 }
 
-changementDeMenu(fakeBtnMenu[1])
+//changementDeMenu(fakeBtnMenu[1])
