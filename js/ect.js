@@ -4,7 +4,7 @@ var interlocuteurs = [];
 var idMoi = "";
 let SignalingHost = {
         host: "www.ecoute.app",
-        port: 9e3,
+        port: 9000,
         path: "/ecouteapp"
     },
     fakeBtnMenu = [{
@@ -47,16 +47,16 @@ function JeSuisLanceur(e) {
         qrGen();
     }));
 
-    idMoi != "" && (document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi);
-    idDefini == 1 && qrGen();
-
     peer.on("error", e => {
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
             changementDeMenu(fakeBtnMenu[0]), streamLocal.getTracks().forEach(e => e.stop())
         })
     }), peer.on("connection", (function (e) {
-        idAutre = (conn = e).peer, paramConn()
+        conn = e;
+        idAutre = e.peer;
+        paramConn();
     })), peer.on("disconnected", (function () {
+        console.log('disconnected...reconnecting try')
         peer.reconnect()
     })), peer.on("call", (function (e) {
         call = e;
