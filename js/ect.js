@@ -153,6 +153,7 @@ const newVidChat = (viddt, identif) => {
         box.classList.add("vidbloc");
         let vid = box.insertAdjacentElement("afterbegin", document.createElement('video'));
         vid.setAttribute('data-etatcarre', 'min');
+        if (identif == "it-sm-ee") vid.muted = true;
         vid.id = "a" + identif;
         vid.setAttribute('onclick', 'vidFullScreen(this)');
         vid.srcObject = viddt;
@@ -228,4 +229,4 @@ function closeBackToMenu(e) {
     })
 }
 
-//changementDeMenu(fakeBtnMenu[1])
+changementDeMenu(fakeBtnMenu[1])
