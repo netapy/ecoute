@@ -40,8 +40,10 @@ function JeSuisLanceur(e) {
     });
 
     peer.on("open", (function (e) {
-        idMoi = String(e), uiConnex("connecte")
-        idDefini = !0, document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
+        idMoi = String(e);
+        uiConnex("connecte");
+        idDefini = !0;
+        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         qrGen();
     }));
 
@@ -66,7 +68,9 @@ function JeSuisLanceur(e) {
 
 function paramCall() {
     call.on("stream", (function (e) {
-        console.log(call.peer);
+        try {
+            document.querySelector("#a" + call.peer).parentElement.remove()
+        } catch (e) {}
         newVidChat(e, call.peer);
     })), call.on("close", (function () {
         console.log('call ferme');
@@ -90,12 +94,16 @@ function paramConn() {
         divSms = document.querySelector("#smsContainer");
         divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
         divSms.scrollTop = divSms.scrollHeight;
-    })), conn.on("close", (function (e) {
+    }));
+    conn.on("close", (function (e) {
+        console.log("il a fermé la connexion !!")
         changementDeMenu(fakeBtnMenu[0]);
         try {
             streamLocal.getTracks().forEach(e => e.stop())
         } catch (e) {}
-    })), lastPressed = "none", changementDeMenu(fakeBtnMenu[1])
+    }));
+    lastPressed = "none";
+    changementDeMenu(fakeBtnMenu[1]);
 }
 
 function SendMessage() {
@@ -106,9 +114,12 @@ function SendMessage() {
 }
 
 function CallDude(e) {
-    // try {
-    //     streamLocal.getTracks().forEach(e => e.stop())
-    // } catch (e) {}
+    try {
+        streamLocal.getTracks().forEach(e => e.stop())
+    } catch (e) {}
+    try {
+        document.querySelector("#ait-sm-ee").parentElement.remove()
+    } catch (e) {}
     let videoStreamm;
     navigator.mediaDevices.getUserMedia({
         audio: true
@@ -130,6 +141,7 @@ function CallDude(e) {
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
         };
+        streamLocal = theStream;
         newVidChat(theStream, "it-sm-ee")
         call = peer.call(idAutre, streamLocal);
         paramCall();
@@ -148,7 +160,6 @@ var dicoZones = {
 
 const newVidChat = (viddt, identif) => {
     if (!document.body.contains(document.querySelector('#a' + identif))) {
-        streamLocal = viddt;
         let box = document.createElement('div');
         box.classList.add("vidbloc");
         let vid = box.insertAdjacentElement("afterbegin", document.createElement('video'));
@@ -221,6 +232,8 @@ function closeBackToMenu(e) {
                     streamLocal.getTracks().forEach(e => e.stop())
                 } catch (e) {}
                 idDefini = !1;
+                conn.close();
+                peer.disconnect();
                 changementDeMenu(e);
                 break;
             default:

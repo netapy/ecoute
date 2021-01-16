@@ -324,8 +324,11 @@
      transition: all .1s cubic-bezier(.25, .8, .25, 1);
      max-width: 500px;
      max-height: 500px;
+     border-radius: 5px;
  }
 
  #ait-sm-ee {
      padding: 15px;
+     background-color: whitesmoke;
+     border-radius: 5px;
  }
