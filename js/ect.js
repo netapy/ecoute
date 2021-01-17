@@ -26,11 +26,11 @@ let SignalingHost = {
 var streamLocal, twocall, displHelp = !1;
 
 function JeSuisLanceur(e) {
-    0 == idDefini && (peer = new Peer(idMoi, {
+    peer = new Peer(idMoi, {
         host: SignalingHost.host,
         port: SignalingHost.port,
         path: SignalingHost.path
-    }));
+    });
 
     let qrGen = () => new QRCode(document.getElementById("qrcode"), {
         text: "https://ecoute.app/" + String(idMoi),
@@ -66,7 +66,9 @@ function JeSuisLanceur(e) {
 
 function paramCall() {
     call.on("stream", (function (e) {
-        console.log(call.peer);
+        try {
+            document.querySelector("#a" + call.peer).parentElement.remove();
+        } catch (e) {};
         newVidChat(e, call.peer);
     })), call.on("close", (function () {
         console.log('call ferme');
@@ -106,9 +108,12 @@ function SendMessage() {
 }
 
 function CallDude(e) {
-    // try {
-    //     streamLocal.getTracks().forEach(e => e.stop())
-    // } catch (e) {}
+    try {
+        streamLocal.getTracks().forEach(e => e.stop())
+    } catch (e) {};
+    try {
+        document.querySelector("#ait-sm-ee").parentElement.remove();
+    } catch (e) {}
     let videoStreamm;
     navigator.mediaDevices.getUserMedia({
         audio: true
@@ -130,7 +135,8 @@ function CallDude(e) {
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
         };
-        newVidChat(theStream, "it-sm-ee")
+        newVidChat(theStream, "it-sm-ee");
+        streamLocal = theStream;
         call = peer.call(idAutre, streamLocal);
         paramCall();
     }).catch(e => {
@@ -148,7 +154,6 @@ var dicoZones = {
 
 const newVidChat = (viddt, identif) => {
     if (!document.body.contains(document.querySelector('#a' + identif))) {
-        streamLocal = viddt;
         let box = document.createElement('div');
         box.classList.add("vidbloc");
         let vid = box.insertAdjacentElement("afterbegin", document.createElement('video'));
@@ -228,4 +233,4 @@ function closeBackToMenu(e) {
     })
 }
 
-//changementDeMenu(fakeBtnMenu[1])
+changementDeMenu(fakeBtnMenu[1])
