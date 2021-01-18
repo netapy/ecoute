@@ -4,7 +4,7 @@ var interlocuteurs = [];
 var idMoi = "";
 let SignalingHost = {
         host: "www.ecoute.app",
-        port: 9000,
+        port: 9e3,
         path: "/ecouteapp"
     },
     fakeBtnMenu = [{
@@ -26,11 +26,11 @@ let SignalingHost = {
 var streamLocal, twocall, displHelp = !1;
 
 function JeSuisLanceur(e) {
-    0 == idDefini && (peer = new Peer(idMoi, {
+    peer = new Peer(idMoi, {
         host: SignalingHost.host,
         port: SignalingHost.port,
         path: SignalingHost.path
-    }));
+    });
 
     let qrGen = () => new QRCode(document.getElementById("qrcode"), {
         text: "https://ecoute.app/" + String(idMoi),
@@ -40,23 +40,21 @@ function JeSuisLanceur(e) {
     });
 
     peer.on("open", (function (e) {
-        idMoi = String(e);
-        uiConnex("connecte");
-        idDefini = !0;
-        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
+        idMoi = String(e), uiConnex("connecte")
+        idDefini = !0, document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         qrGen();
     }));
+
+    idMoi != "" && (document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi);
+    idDefini == 1 && qrGen();
 
     peer.on("error", e => {
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
             changementDeMenu(fakeBtnMenu[0]), streamLocal.getTracks().forEach(e => e.stop())
         })
     }), peer.on("connection", (function (e) {
-        conn = e;
-        idAutre = e.peer;
-        paramConn();
+        idAutre = (conn = e).peer, paramConn()
     })), peer.on("disconnected", (function () {
-        console.log('disconnected...reconnecting try')
         peer.reconnect()
     })), peer.on("call", (function (e) {
         call = e;
@@ -69,8 +67,8 @@ function JeSuisLanceur(e) {
 function paramCall() {
     call.on("stream", (function (e) {
         try {
-            document.querySelector("#a" + call.peer).parentElement.remove()
-        } catch (e) {}
+            document.querySelector("#a" + call.peer).parentElement.remove();
+        } catch (e) {};
         newVidChat(e, call.peer);
     })), call.on("close", (function () {
         console.log('call ferme');
@@ -94,16 +92,12 @@ function paramConn() {
         divSms = document.querySelector("#smsContainer");
         divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
         divSms.scrollTop = divSms.scrollHeight;
-    }));
-    conn.on("close", (function (e) {
-        console.log("il a fermé la connexion !!")
+    })), conn.on("close", (function (e) {
         changementDeMenu(fakeBtnMenu[0]);
         try {
             streamLocal.getTracks().forEach(e => e.stop())
         } catch (e) {}
-    }));
-    lastPressed = "none";
-    changementDeMenu(fakeBtnMenu[1]);
+    })), lastPressed = "none", changementDeMenu(fakeBtnMenu[1])
 }
 
 function SendMessage() {
@@ -116,9 +110,9 @@ function SendMessage() {
 function CallDude(e) {
     try {
         streamLocal.getTracks().forEach(e => e.stop())
-    } catch (e) {}
+    } catch (e) {};
     try {
-        document.querySelector("#ait-sm-ee").parentElement.remove()
+        document.querySelector("#ait-sm-ee").parentElement.remove();
     } catch (e) {}
     let videoStreamm;
     navigator.mediaDevices.getUserMedia({
@@ -142,7 +136,9 @@ function CallDude(e) {
             theStream.addTrack(videoStreamm);
         };
         streamLocal = theStream;
-        newVidChat(theStream, "it-sm-ee")
+        let vid = document.querySelector('#it-sm-ee')
+        vid.srcObject = streamLocal;
+        vid.play()
         call = peer.call(idAutre, streamLocal);
         paramCall();
     }).catch(e => {
@@ -155,7 +151,7 @@ var dicoZones = {
     BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Mode productif en construction.',
     BtnParam: "<div style='padding: 10px; max-width:550px;'><h5>Ecoute,</h5><p>Dès l'instant où la connexion est établie entre vous, plus rien n'existe en dehors de votre conversation. <br>Pas de serveurs, publicités, trackers... Rien.<br>Lorsque tout disparaît, il ne reste plus que vous, votre parole et votre <strong>écoute.</strong></p><p>Profitez, personne ne vous regarde.</p><p>-B</p></div>",
     BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
-    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
+    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)"></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="callDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
 const newVidChat = (viddt, identif) => {
@@ -164,7 +160,6 @@ const newVidChat = (viddt, identif) => {
         box.classList.add("vidbloc");
         let vid = box.insertAdjacentElement("afterbegin", document.createElement('video'));
         vid.setAttribute('data-etatcarre', 'min');
-        if (identif == "it-sm-ee") vid.muted = true;
         vid.id = "a" + identif;
         vid.setAttribute('onclick', 'vidFullScreen(this)');
         vid.srcObject = viddt;
@@ -176,7 +171,7 @@ const newVidChat = (viddt, identif) => {
 
 const vidFullScreen = (el) => {
     if (el.dataset.etatcarre == "min") {
-        el.style = "position: absolute; height: 100vw; width: auto; z-index:999; box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);  top: 50%; left: 50%; transform: translate(-50%, -50%);";
+        el.style = "position: absolute; height: 80vw; width: auto; z-index:999; box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);  top: 50%; left: 50%; transform: translate(-50%, -50%);";
         el.dataset.etatcarre = "hii";
     } else {
         el.style = '';
@@ -232,8 +227,6 @@ function closeBackToMenu(e) {
                     streamLocal.getTracks().forEach(e => e.stop())
                 } catch (e) {}
                 idDefini = !1;
-                conn.close();
-                peer.disconnect();
                 changementDeMenu(e);
                 break;
             default:
