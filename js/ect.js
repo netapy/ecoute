@@ -47,15 +47,13 @@ function JeSuisLanceur(e) {
         qrGen();
     }));
 
-    //idMoi != "" && (document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi);
-    //idDefini == 1 && qrGen();
-
     peer.on("error", e => {
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
             changementDeMenu(fakeBtnMenu[0]), streamLocal.getTracks().forEach(e => e.stop())
         })
     }), peer.on("connection", (function (e) {
-        idAutre = (conn = e).peer, paramConn()
+        idAutre = (conn = e).peer;
+        paramConn();
     })), peer.on("disconnected", (function () {
         peer.reconnect()
     })), peer.on("call", (function (e) {
@@ -94,12 +92,14 @@ function paramConn() {
         divSms = document.querySelector("#smsContainer");
         divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
         divSms.scrollTop = divSms.scrollHeight;
-    })), conn.on("close", (function (e) {
+    }));
+    conn.on("close", (function (e) {
         changementDeMenu(fakeBtnMenu[0]);
         try {
-            streamLocal.getTracks().forEach(e => e.stop())
+            streamLocal.getTracks().forEach(e => e.stop());
         } catch (e) {}
-    })), lastPressed = "none", changementDeMenu(fakeBtnMenu[1])
+    }));
+    lastPressed = "none", changementDeMenu(fakeBtnMenu[1]);
 }
 
 function SendMessage() {
@@ -111,7 +111,7 @@ function SendMessage() {
 
 function CallDude(e) {
     try {
-        streamLocal.getTracks().forEach(e => e.stop())
+        streamLocal.getTracks().forEach(e => e.stop());
     } catch (e) {};
     try {
         document.querySelector("#ait-sm-ee").parentElement.remove();
@@ -138,9 +138,9 @@ function CallDude(e) {
             theStream.addTrack(videoStreamm);
         };
         streamLocal = theStream;
-        let vid = document.querySelector('#it-sm-ee')
+        let vid = document.querySelector('#it-sm-ee');
         vid.srcObject = streamLocal;
-        vid.play()
+        vid.play();
         call = peer.call(idAutre, streamLocal);
         paramCall();
     }).catch(e => {
