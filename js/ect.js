@@ -40,13 +40,15 @@ function JeSuisLanceur(e) {
     });
 
     peer.on("open", (function (e) {
-        idMoi = String(e), uiConnex("connecte")
-        idDefini = !0, document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
+        idMoi = String(e);
+        uiConnex("connecte");
+        idDefini = !0;
+        document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         qrGen();
     }));
 
-    idMoi != "" && (document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi);
-    idDefini == 1 && qrGen();
+    //idMoi != "" && (document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi);
+    //idDefini == 1 && qrGen();
 
     peer.on("error", e => {
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
@@ -227,7 +229,9 @@ function closeBackToMenu(e) {
                     streamLocal.getTracks().forEach(e => e.stop())
                 } catch (e) {}
                 idDefini = !1;
+                peer.destroy();
                 changementDeMenu(e);
+                idMoi = '';
                 break;
             default:
                 break
