@@ -1,5 +1,10 @@
 var lastPressed, peer, conn, call, idAutre;
-var interlocuteurs = [];
+
+var listePaires = [];
+var listeConnexions = [];
+var listeCalls = [];
+var indexConn = 0;
+
 "serviceWorker" in navigator && navigator.serviceWorker.register("service-worker.js");
 var idMoi = "";
 let SignalingHost = {
@@ -40,6 +45,7 @@ function JeSuisLanceur(e) {
     });
 
     peer.on("open", (function (e) {
+        console.log("peer on open !");
         idMoi = String(e);
         uiConnex("connecte");
         idDefini = !0;
@@ -48,31 +54,46 @@ function JeSuisLanceur(e) {
     }));
 
     peer.on("error", e => {
+        console.log("peer on error !");
+        console.log(e)
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
-            changementDeMenu(fakeBtnMenu[0]), streamLocal.getTracks().forEach(e => e.stop())
+            changementDeMenu(fakeBtnMenu[0]);
+            try {
+                streamLocal.getTracks().forEach(e => e.stop());
+            } catch (e) {};
         })
-    }), peer.on("connection", (function (e) {
-        idAutre = (conn = e).peer;
-        paramConn();
-    })), peer.on("disconnected", (function () {
+    });
+    peer.on("connection", (function (e) {
+        console.log("peer on connection !");
+        idAutre = e.peer;
+
+        listeConnexions[indexConn] = e
+        listePaires.push(e.peer);
+        paramConn(listeConnexions[indexConn]);
+        indexConn += 1;
+    }));
+    peer.on("disconnected", (function () {
         peer.reconnect()
-    })), peer.on("call", (function (e) {
-        call = e;
-        paramCall();
-        call.answer();
-    }))
+    }));
+    peer.on("call", (function (e) {
+        listeCalls[indexConn] = e;
+        paramCall(e);
+        e.answer();
+        indexConn += 1
+    }));
     localStorage.removeItem("codeAmi");
 }
 
-function paramCall() {
-    call.on("stream", (function (e) {
+function paramCall(ecall) {
+    ecall.on("stream", (function (e) {
         try {
-            document.querySelector("#a" + call.peer).parentElement.remove();
+            document.querySelector("#a" + ecall.peer).parentElement.remove();
         } catch (e) {};
-        newVidChat(e, call.peer);
-    })), call.on("close", (function () {
+        newVidChat(e, ecall.peer);
+    }));
+    ecall.on("close", (function () {
         console.log('call ferme');
-    }))
+    }));
 };
 
 function clsCall() {
@@ -82,29 +103,33 @@ function clsCall() {
 
 function Connexion() {
     let e = document.getElementById("IdDuContact").value;
-    conn = peer.connect(e);
+    let conn = peer.connect(e);
     idAutre = e;
-    paramConn();
+    listePaires.push(e);
+    listeConnexions[indexConn] = conn;
+    paramConn(listeConnexions[indexConn]);
+    indexConn += 1;
 };
 
-function paramConn() {
-    conn.on("data", (function (e) {
+function paramConn(e) {
+    e.on("data", (function (e) {
         divSms = document.querySelector("#smsContainer");
         divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
         divSms.scrollTop = divSms.scrollHeight;
     }));
-    conn.on("close", (function (e) {
-        changementDeMenu(fakeBtnMenu[0]);
-        try {
-            streamLocal.getTracks().forEach(e => e.stop());
-        } catch (e) {}
+    e.on("close", (function (e) {
+        swal('Utilisateur deconnecté.')
     }));
-    lastPressed = "none", changementDeMenu(fakeBtnMenu[1]);
+    lastPressed = "none";
+    //on check si on est sur le menu de conv ou pas, si c'est pas le cas on y va
+    if (!document.body.contains(document.querySelector("#titreConv"))) changementDeMenu(fakeBtnMenu[1]);
 }
 
 function SendMessage() {
     let e = document.getElementById("idmsgAEnvoyer");
-    conn.send(e.value);
+    for (ii in listeConnexions) {
+        listeConnexions[ii].send(e.value);
+    }
     let t = document.querySelector("#smsContainer");
     t.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(e.value) + "</div>"), e.value = "", t.scrollTop = t.scrollHeight
 }
@@ -141,8 +166,10 @@ function CallDude(e) {
         let vid = document.querySelector('#it-sm-ee');
         vid.srcObject = streamLocal;
         vid.play();
-        call = peer.call(idAutre, streamLocal);
-        paramCall();
+        for (peers in listePaires) {
+            let ecall = peer.call(listePaires[peers], streamLocal);
+            paramCall(ecall);
+        }
     }).catch(e => {
         throw e
     });
@@ -167,7 +194,6 @@ const newVidChat = (viddt, identif) => {
         vid.srcObject = viddt;
         vid.play();
         document.querySelector(".convVidContainer").insertAdjacentElement("afterbegin", box);
-        interlocuteurs.push(idAutre)
     }
 };
 
