@@ -36,14 +36,12 @@ function JeSuisLanceur(e) {
         port: SignalingHost.port,
         path: SignalingHost.path
     });
-
     let qrGen = () => new QRCode(document.getElementById("qrcode"), {
         text: "https://ecoute.app/" + String(idMoi),
         width: 80,
         height: 80,
         colorLight: "#eeeeee"
     });
-
     peer.on("open", (function (e) {
         console.log("peer on open !");
         idMoi = String(e);
@@ -67,9 +65,13 @@ function JeSuisLanceur(e) {
         console.log("peer on connection !");
         idAutre = e.peer;
 
-        listeConnexions[indexConn] = e
+        listeConnexions[indexConn] = e;
         listePaires.push(e.peer);
         paramConn(listeConnexions[indexConn]);
+        setTimeout(() => {
+            listeConnexions[indexConn - 1].send("^^////" + String(listePaires));
+        }, 2000)
+        listeConnexions[indexConn].send(listePaires);
         indexConn += 1;
     }));
     peer.on("disconnected", (function () {
@@ -82,7 +84,7 @@ function JeSuisLanceur(e) {
         indexConn += 1
     }));
     localStorage.removeItem("codeAmi");
-}
+};
 
 function paramCall(ecall) {
     ecall.on("stream", (function (e) {
@@ -101,8 +103,7 @@ function clsCall() {
     document.getElementsByClassName("vidCont")[1].style.display = "none";
 };
 
-function Connexion() {
-    let e = document.getElementById("IdDuContact").value;
+function Connexion(e) {
     let conn = peer.connect(e);
     idAutre = e;
     listePaires.push(e);
@@ -113,12 +114,27 @@ function Connexion() {
 
 function paramConn(e) {
     e.on("data", (function (e) {
-        divSms = document.querySelector("#smsContainer");
-        divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
-        divSms.scrollTop = divSms.scrollHeight;
+        if (!String(e).includes("^^////")) {
+            //faire module pour bloquer les messages doubles (genre un tag 'temps' à la ms et on check);
+            console.log("message normal : " + String(e))
+            divSms = document.querySelector("#smsContainer");
+            divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
+            divSms.scrollTop = divSms.scrollHeight;
+        } else {
+            console.log("message spé : " + String(e))
+            let msg = String(e.replace("^^////", "")).split(',').filter(e => e !== idMoi);
+            msg = msg.filter(e => listePaires.indexOf(e) < 0)
+            console.log(msg);
+            if (msg.length != 0) { //pour filtrer le cas appel 1v1
+                for (idpeer in msg) {
+                    console.log("connexion à " + msg[idpeer])
+                    Connexion(msg[idpeer])
+                };
+            };
+        };
     }));
     e.on("close", (function (e) {
-        swal('Utilisateur deconnecté.')
+        swal(e.peer + ' s\'est deconnecté.')
     }));
     lastPressed = "none";
     //on check si on est sur le menu de conv ou pas, si c'est pas le cas on y va
@@ -131,7 +147,7 @@ function SendMessage() {
         listeConnexions[ii].send(e.value);
     }
     let t = document.querySelector("#smsContainer");
-    t.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(e.value) + "</div>"), e.value = "", t.scrollTop = t.scrollHeight
+    t.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(e.value) + "</div>"), e.value = "", t.scrollTop = t.scrollHeight;
 }
 
 function CallDude(e) {
@@ -179,7 +195,7 @@ var dicoZones = {
     returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom...">',
     BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Mode productif en construction.',
     BtnParam: "<div style='padding: 10px; max-width:550px;'><h5>Ecoute,</h5><p>Dès l'instant où la connexion est établie entre vous, plus rien n'existe en dehors de votre conversation. <br>Pas de serveurs, publicités, trackers... Rien.<br>Lorsque tout disparaît, il ne reste plus que vous, votre parole et votre <strong>écoute.</strong></p><p>Profitez, personne ne vous regarde.</p><p>-B</p></div>",
-    BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion()" disabled>Connexion</button>',
+    BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
     BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="callDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
