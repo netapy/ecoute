@@ -62,17 +62,32 @@ function JeSuisLanceur(e) {
         })
     });
     peer.on("connection", (function (e) {
-        console.log("peer on connection !");
-        idAutre = e.peer;
+        swal(String(e.peer) + " aimerais rejoindre une conversation avec toi.", {
+                buttons: {
+                    accept: "Accepter",
+                    defeat: true,
+                },
+                closeOnClickOutside: false
+            })
+            .then((value) => {
+                switch (value) {
+                    case "accept":
+                        console.log("peer on connection !");
+                        idAutre = e.peer;
 
-        listeConnexions[indexConn] = e;
-        listePaires.push(e.peer);
-        paramConn(listeConnexions[indexConn]);
-        setTimeout(() => {
-            listeConnexions[indexConn - 1].send("^^////" + String(listePaires));
-        }, 2000)
-        listeConnexions[indexConn].send(listePaires);
-        indexConn += 1;
+                        listeConnexions[indexConn] = e;
+                        listePaires.push(e.peer);
+                        paramConn(listeConnexions[indexConn]);
+                        setTimeout(() => {
+                            listeConnexions[indexConn - 1].send("^^////" + String(listePaires));
+                        }, 2000)
+                        listeConnexions[indexConn].send(listePaires);
+                        indexConn += 1;
+                        break;
+                    default:
+                        break;
+                };
+            });
     }));
     peer.on("disconnected", (function () {
         peer.reconnect()
