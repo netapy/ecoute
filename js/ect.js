@@ -29,6 +29,7 @@ let SignalingHost = {
         height: 480
     };
 var streamLocal, twocall, displHelp = !1;
+var myCallTick = "none";
 
 function JeSuisLanceur(e) {
     let qrGen = () => new QRCode(document.getElementById("qrcode"), {
@@ -48,7 +49,7 @@ function JeSuisLanceur(e) {
         document.getElementById("monIdFrr").innerHTML = '<span class="shyUrl">ecoute.app/</span>' + idMoi;
         qrGen();
     }
-    
+
     peer.on("open", (function (e) {
         idMoi = String(e);
         uiConnex("connecte");
@@ -69,7 +70,7 @@ function JeSuisLanceur(e) {
         swal(String(e.peer) + " aimerais rejoindre une conversation avec toi.", {
                 buttons: {
                     accept: "Accepter",
-                    defeat: true,
+                    defeat: "Ignorer",
                 },
                 closeOnClickOutside: false
             })
@@ -86,6 +87,8 @@ function JeSuisLanceur(e) {
                         //}, 2000)
                         listeConnexions[indexConn].send("^^////" + String(listePaires));
                         indexConn += 1;
+                        if (myCallTick != "none") CallDude(myCallTick);
+                        if (listeConnexions.length > 1) document.querySelector("#titreConv").innerHTML = "📡 Groupe"
                         break;
                     default:
                         break;
@@ -191,6 +194,7 @@ function CallDude(e) {
             });
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
+            myCallTick = "video";
         } else if (e == 'ecran') {
             let videoStream = await navigator.mediaDevices.getDisplayMedia({
                 video: true
@@ -199,7 +203,10 @@ function CallDude(e) {
             });
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
-        };
+            myCallTick = "ecran";
+        } else {
+            myCallTick = "audio";
+        }
         streamLocal = theStream;
         let vid = document.querySelector('#it-sm-ee');
         vid.srcObject = streamLocal;
