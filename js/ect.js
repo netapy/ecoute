@@ -7,11 +7,8 @@ var indexConn = 0;
 
 "serviceWorker" in navigator && navigator.serviceWorker.register("service-worker.js");
 var idMoi = "";
-let SignalingHost = {
-        host: "www.ecoute.app",
-        port: 9e3,
-        path: "/ecouteapp"
-    },
+
+let SignalingHost,
     fakeBtnMenu = [{
         id: "returnArrow"
     }, {
@@ -30,6 +27,21 @@ let SignalingHost = {
     };
 var streamLocal, twocall, displHelp = !1;
 var myCallTick = "none";
+
+function resetSignaling() {
+    SignalingHost = {
+        host: "www.ecoute.app",
+        port: 9000,
+        path: "/ecouteapp"
+    }
+    localStorage.setItem("signalServer", JSON.stringify(SignalingHost))
+}
+
+if (localStorage.getItem("signalServer") == null) {
+    resetSignaling()
+} else {
+    SignalingHost = JSON.parse(localStorage.getItem("signalServer"))
+}
 
 function JeSuisLanceur(e) {
     let qrGen = () => new QRCode(document.getElementById("qrcode"), {
@@ -223,7 +235,7 @@ function CallDude(e) {
 var dicoZones = {
     returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom...">',
     BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Salles d\'écoute en construction.',
-    BtnParam: "<div style='padding: 10px; max-width:550px;'><h5>Ecoute,</h5><p>Dès l'instant où la connexion est établie entre vous, plus rien n'existe en dehors de votre conversation. <br>Pas de serveurs, publicités, trackers... Rien.<br>Lorsque tout disparaît, il ne reste plus que vous, votre parole et votre <strong>écoute.</strong></p><p>Profitez, personne ne vous regarde.</p><p>-B</p></div>",
+    BtnParam: '<div style="padding: 10px; max-width:550px;"><h5>Paramètres :</h5><p>Tu es libre d\'utiliser le serveur de signalisation de ton choix.</p><div class="col"><input type="text" class="form-control" placeholder="Adresse"></div><div class="col"><input type="text" class="form-control" placeholder="Port"></div><div class="col"><input type="text" class="form-control" placeholder="Chemin"></div><div><button class="col-6 btn" onclick="resetSignaling();swal({text:\'Serveur Ecoute enregistré.\',icon:\'success\',button:!1,timer:1e3});">Réinitialiser</button><button class="col-6 btn" style="color:#5770BE" onclick="saveNewSignaling()">Appliquer</button></div></div>',
     BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
     BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
@@ -309,6 +321,32 @@ function closeBackToMenu(e) {
                 break
         }
     })
+}
+
+function saveNewSignaling() {
+    let listvalueInput = document.querySelector(".zonePrincipale ").getElementsByClassName("form-control")
+    if (![...listvalueInput].map(x => x.value).includes("")) {
+        let newSignal = {
+            host: listvalueInput[0].value,
+            port: listvalueInput[1].value,
+            path: listvalueInput[2].value
+        }
+        localStorage.setItem("signalServer", JSON.stringify(newSignal))
+        SignalingHost = newSignal;
+        swal({
+            text: "Serveur enregistré.",
+            icon: "success",
+            button: false,
+            timer: 1000
+        })
+    } else {
+        swal({
+            text: "Saisis tous les champs.",
+            icon: "error",
+            button: false,
+            timer: 1000
+        })
+    }
 }
 
 //changementDeMenu(fakeBtnMenu[1])

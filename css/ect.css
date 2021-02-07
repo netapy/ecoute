@@ -341,3 +341,7 @@
      flex-shrink: 3;
      max-height: 20vh;
  }
+
+ .form-control{
+     margin: 10px 5px;
+ }
