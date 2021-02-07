@@ -90,13 +90,9 @@ function JeSuisLanceur(e) {
                 switch (value) {
                     case "accept":
                         idAutre = e.peer;
-
                         listeConnexions[indexConn] = e;
                         listePaires.push(e.peer);
                         paramConn(listeConnexions[indexConn]);
-                        //setTimeout(() => {
-                        //    listeConnexions[indexConn - 1].send("^^////" + String(listePaires));
-                        //}, 2000)
                         listeConnexions[indexConn].send("^^////" + String(listePaires));
                         indexConn += 1;
                         if (myCallTick != "none") CallDude(myCallTick);
@@ -195,6 +191,7 @@ function CallDude(e) {
         document.querySelector("#ait-sm-ee").parentElement.remove();
     } catch (e) {}
     let videoStreamm;
+    let vid = document.querySelector('#it-sm-ee');
     navigator.mediaDevices.getUserMedia({
         audio: true
     }).then(async theStream => {
@@ -207,6 +204,7 @@ function CallDude(e) {
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
             myCallTick = "video";
+            vid.style.display = "";
         } else if (e == 'ecran') {
             let videoStream = await navigator.mediaDevices.getDisplayMedia({
                 video: true
@@ -216,11 +214,11 @@ function CallDude(e) {
             [videoStreamm] = videoStream.getVideoTracks();
             theStream.addTrack(videoStreamm);
             myCallTick = "ecran";
+            vid.style.display = "";
         } else {
             myCallTick = "audio";
         }
         streamLocal = theStream;
-        let vid = document.querySelector('#it-sm-ee');
         vid.srcObject = streamLocal;
         vid.play();
         for (peers in listePaires) {
@@ -236,8 +234,8 @@ var dicoZones = {
     returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom...">',
     BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Salles d\'écoute en construction.',
     BtnParam: '<div style="padding: 10px; max-width:550px;"><h5>Paramètres :</h5><p>Tu es libre d\'utiliser le serveur de signalisation de ton choix.</p><div class="col"><input type="text" class="form-control" placeholder="Adresse"></div><div class="col"><input type="text" class="form-control" placeholder="Port"></div><div class="col"><input type="text" class="form-control" placeholder="Chemin"></div><div><button class="col-6 btn" onclick="resetSignaling();swal({text:\'Serveur Ecoute enregistré.\',icon:\'success\',button:!1,timer:1e3});">Réinitialiser</button><button class="col-6 btn" style="color:#5770BE" onclick="saveNewSignaling()">Appliquer</button></div></div>',
-    BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal(\'Ton lien a bien été copié.\')"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
-    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
+    BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal({text:\'Lien copié.\',icon:\'success\',button:!1,timer:1e3})"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
+    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" style="display:none;" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
 const newVidChat = (viddt, identif) => {
@@ -248,6 +246,7 @@ const newVidChat = (viddt, identif) => {
         vid.setAttribute('data-etatcarre', 'min');
         vid.id = "a" + identif;
         vid.setAttribute('onclick', 'vidFullScreen(this)');
+        if (!checkStream(viddt).hasVideo) vid.style.display = "none";
         vid.srcObject = viddt;
         vid.play();
         document.querySelector(".convVidContainer").insertAdjacentElement("afterbegin", box);
@@ -347,6 +346,18 @@ function saveNewSignaling() {
             timer: 1000
         })
     }
+}
+
+function checkStream(stream) {
+    var hasMedia = {
+        hasVideo: false,
+        hasAudio: false
+    };
+    if (stream.getAudioTracks().length)
+        hasMedia.hasAudio = true;
+    if (stream.getVideoTracks().length)
+        hasMedia.hasVideo = true;
+    return hasMedia;
 }
 
 //changementDeMenu(fakeBtnMenu[1])
