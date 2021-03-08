@@ -4,9 +4,9 @@ var listePaires = [];
 var listeConnexions = [];
 var listeCalls = [];
 var indexConn = 0;
+var idMoi = "";
 
 "serviceWorker" in navigator && navigator.serviceWorker.register("service-worker.js");
-var idMoi = "";
 
 let SignalingHost,
     fakeBtnMenu = [{
@@ -19,8 +19,8 @@ let SignalingHost,
     idDefini = !1,
     paramVid = {
         frameRate: {
-            ideal: 15,
-            max: 16
+            ideal: 20,
+            max: 30
         },
         width: 480,
         height: 480
@@ -238,8 +238,10 @@ var dicoZones = {
     BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" style="display:none;" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
+let noAddVideo = false;
 const newVidChat = (viddt, identif) => {
-    if (!document.body.contains(document.querySelector('#a' + identif))) {
+    if (!document.body.contains(document.querySelector('#a' + identif)) && !noAddVideo) {
+        noAddVideo = true;
         let box = document.createElement('div');
         box.classList.add("vidbloc");
         let vid = box.insertAdjacentElement("afterbegin", document.createElement('video'));
@@ -248,9 +250,17 @@ const newVidChat = (viddt, identif) => {
         vid.setAttribute('onclick', 'vidFullScreen(this)');
         if (!checkStream(viddt).hasVideo) vid.style.display = "none";
         vid.srcObject = viddt;
-        vid.play();
-        document.querySelector(".convVidContainer").insertAdjacentElement("afterbegin", box);
-    }
+        let playPromise = vid.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                    document.querySelector(".convVidContainer").insertAdjacentElement("afterbegin", box);
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+        setTimeout(() => noAddVideo = false, 500)
+    };
 };
 
 const vidFullScreen = (el) => {
@@ -270,7 +280,7 @@ function changementDeMenu(e) {
     uiConnex("hide");
     "" == idMoi && "" != document.querySelector("#inputChanmax").value && (idMoi = String(document.querySelector("#inputChanmax").value.replace(/[^\w\s]/gi, "").replace(/ /g, "")) + "-" + String(Math.floor(1000 * Math.random())), localStorage.setItem("pseudoAvant", document.querySelector("#inputChanmax").value));
     lastPressed != e.id ? (t.style.transform = "rotateX(-90deg)", "BtnUIMessages" == e.id ? (n.style.transform = "translateY(50vh)", t.style.margin = "0px") : (t.style.height = "65%", n.style.display = ""), setTimeout(() => {
-        if (zonePrincipalee.innerHTML = dicoZones[e.id], t.style.transform = "rotateX(0deg)", "BtnUIMessages" == e.id ? (t.style.height = "100vh", t.style.width = "100vw", t.style.boxShadow = "0px 0px 0px transparent", t.style.backgroundColor = "transparent", n.style.display = "none", o.style.transform = "translateX(0)", document.querySelector("#titreConv").innerHTML = "✉️ " + String(idAutre), document.querySelector("#idmsgAEnvoyer").addEventListener("keydown", (function (e) {
+        if (zonePrincipalee.innerHTML = dicoZones[e.id], t.style.transform = "rotateX(0deg)", "BtnUIMessages" == e.id ? (t.style.height = "100vh", t.style.width = "100vw", t.style.boxShadow = "0px 0px 0px transparent", t.style.backgroundColor = "transparent", n.style.display = "none", o.style.transform = "translateX(0)", document.querySelector("#titreConv").innerHTML = "✉ " + String(idAutre), document.querySelector("#idmsgAEnvoyer").addEventListener("keydown", (function (e) {
                 "Enter" === e.key && SendMessage()
             }))) : (t.style.width = "auto", t.style.boxShadow = "", t.style.backgroundColor = "", t.style.margin = "0px 20px", o.style.transform = "translateX(50px)", n.style.transform = "translateY(0vh)"), "BtnConnaissance" == e.id) {
             uiConnex("on");
@@ -358,6 +368,17 @@ function checkStream(stream) {
     if (stream.getVideoTracks().length)
         hasMedia.hasVideo = true;
     return hasMedia;
+}
+
+function listPeersFun() {
+    let divlistpr = document.createElement("div")
+    divlistpr.insertAdjacentHTML("afterbegin", "<u>Participants : </u>")
+    for (ii in listePaires) {
+        divlistpr.insertAdjacentHTML("beforeend", "<p>" + String(listePaires[ii]) + "</p>")
+    }
+    swal({
+        content: divlistpr,
+    })
 }
 
 //changementDeMenu(fakeBtnMenu[1])
