@@ -48,7 +48,8 @@ function JeSuisLanceur(e) {
         text: "https://ecoute.app/" + String(idMoi),
         width: 80,
         height: 80,
-        colorLight: "#eeeeee"
+        colorLight: "#eeeeee",
+        colorDark: "#3d3d3d"
     });
 
     if (!idDefini) {
@@ -72,14 +73,11 @@ function JeSuisLanceur(e) {
 
     peer.on("error", e => {
         "peer-unavailable" == e.type && swal("Désolé", "L'utilisateur n'existe pas ou n'est pas connecté.", "error").then(e => {
-            changementDeMenu(fakeBtnMenu[0]);
-            try {
-                streamLocal.getTracks().forEach(e => e.stop());
-            } catch (e) {};
+            quitConv(fakeBtnMenu[0])
         })
     });
     peer.on("connection", (function (e) {
-        swal(String(e.peer) + " aimerais rejoindre une conversation avec toi.", {
+        swal(getEmoji(e.peer) + String(e.peer) + " veut rejoindre ta conversation.", {
                 buttons: {
                     accept: "Accepter",
                     defeat: "Ignorer",
@@ -96,7 +94,15 @@ function JeSuisLanceur(e) {
                         listeConnexions[indexConn].send("^^////" + String(listePaires));
                         indexConn += 1;
                         if (myCallTick != "none") CallDude(myCallTick);
-                        if (listeConnexions.length > 1) document.querySelector("#titreConv").innerHTML = "📡 Groupe"
+                        if (listeConnexions.filter((e) => {
+                                return e != null
+                            }).length > 1) document.querySelector("#titreConv").innerHTML = "📡 Groupe <button class='btn' onclick='listPeersFun()'>👥</button>";
+                        setTimeout(() => {
+                            try {
+                                document.querySelector("#attenteConv").remove();
+                            } catch (e) {}
+                            document.querySelector("#btnsCall").innerHTML = boutonsCall;
+                        }, 500)
                         break;
                     default:
                         break;
@@ -105,6 +111,7 @@ function JeSuisLanceur(e) {
     }));
     peer.on("disconnected", (function () {
         peer.reconnect()
+        console.log("Deconnecté, reconnexion...")
     }));
     peer.on("call", (function (e) {
         listeCalls[indexConn] = e;
@@ -139,15 +146,20 @@ function Connexion(e) {
     listeConnexions[indexConn] = conn;
     paramConn(listeConnexions[indexConn]);
     indexConn += 1;
+    if (listeConnexions.filter((e) => {
+            return e != null
+        }).length > 1) document.querySelector("#titreConv").innerHTML = "📡 Groupe <button class='btn' style='font-size:8px;opacity:.8;' onclick='listPeersFun()'>👥</button>"
 };
 
 function paramConn(e) {
     e.on("data", (function (e) {
         if (!String(e).includes("^^////")) {
+            if (String(e).includes("^!%^")) e = getEmoji(e.split("^!%^")[0].split("-")[0]) + " : " + e.split("^!%^")[1];
             divSms = document.querySelector("#smsContainer");
             divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
             divSms.scrollTop = divSms.scrollHeight;
         } else {
+            console.log(e)
             let msg = String(e.replace("^^////", "")).split(',').filter(e => e !== idMoi);
             msg = msg.filter(e => listePaires.indexOf(e) < 0)
             if (msg.length != 0) {
@@ -155,32 +167,42 @@ function paramConn(e) {
                     Connexion(msg[idpeer])
                 };
             };
+            try {
+                document.querySelector("#attenteConv").remove();
+            } catch (e) {}
+            document.querySelector("#btnsCall").innerHTML = boutonsCall;
         };
     }));
     e.on("close", (function () {
         for (conn in listeConnexions) {
             if (listeConnexions[conn]._open === false) {
                 try {
-                    document.querySelector("#a" + listeConnexions[conn].peer).parentElement.remove();
+                    let lui = listeConnexions[conn].peer
+                    document.querySelector("#a" + lui).parentElement.remove();
                     listeConnexions[conn] = 'closed';
-                    listePaires.splice(listePaires.indexOf(listeConnexions[conn].peer), 1)
+                    listePaires.splice(listePaires.indexOf(lui), 1);
+                    divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left; opacity:.6' class='smsTxt'>" + lui + " s'est deconnecté.</div>");
                 } catch (e) {}
             }
         }
 
     }));
     lastPressed = "none";
-    //on check si on est sur le menu de conv ou pas, si c'est pas le cas on y va
     if (!document.body.contains(document.querySelector("#titreConv"))) changementDeMenu(fakeBtnMenu[1]);
 }
 
 function SendMessage() {
     let e = document.getElementById("idmsgAEnvoyer");
-    for (ii in listeConnexions) {
-        listeConnexions[ii].send(e.value);
-    }
     let t = document.querySelector("#smsContainer");
-    t.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(e.value) + "</div>"), e.value = "", t.scrollTop = t.scrollHeight;
+    let msg = e.value;
+    t.insertAdjacentHTML("beforeend", "<div class='smsTxt' style='text-align: right; opacity:.7;'>" + String(e.value) + "</div>"), t.scrollTop = t.scrollHeight;
+    if (listeConnexions.filter((ele) => {
+            return ele != null
+        }).length > 1) msg = idMoi + "^!%^" + e.value;
+    for (ii in listeConnexions) {
+        listeConnexions[ii].send(msg);
+    };
+    e.value = "";
 }
 
 function CallDude(e) {
@@ -230,12 +252,14 @@ function CallDude(e) {
     });
 };
 
+var boutonsCall = '<div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button class="buttonEct callBtn" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div>'
+
 var dicoZones = {
-    returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom...">',
-    BtnAleatoire: '<img src="assets/ecoute.svg" style="height: 100px; filter: brightness(1.1); opacity:.5">Salles d\'écoute en construction.',
+    returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom..." onkeypress="return /[0-9a-zA-Z]/i.test(event.key)">',
     BtnParam: '<div style="padding: 10px; max-width:550px;"><h5>Paramètres :</h5><p>Tu es libre d\'utiliser le serveur de signalisation de ton choix.</p><div class="col"><input type="text" class="form-control" placeholder="Adresse"></div><div class="col"><input type="text" class="form-control" placeholder="Port"></div><div class="col"><input type="text" class="form-control" placeholder="Chemin"></div><div><button class="col-6 btn" onclick="resetSignaling();swal({text:\'Serveur Ecoute enregistré.\',icon:\'success\',button:!1,timer:1e3});">Réinitialiser</button><button class="col-6 btn" style="color:#5770BE" onclick="saveNewSignaling()">Appliquer</button></div></div>',
-    BtnConnaissance: '<h4>Toi :</h4><div id="monIdFrr" onclick="copyToClipboard();swal({text:\'Lien copié.\',icon:\'success\',button:!1,timer:1e3})"></div><div id="qrcode"></div><hr><h4>Lui/Elle :</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom unique..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
-    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" style="display:none;" muted></video></div></div><div class="row text-center"><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="callBtn" class="buttonEct" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button id="callBtn" class="buttonEct" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
+    BtnConnaissance: '<h4>Ton identifiant : </h4><div id="monIdFrr" onclick="copyToClipboard();swal({text:\'Lien copié.\',icon:\'success\',button:!1,timer:1e3})"></div><div id="qrcode"></div><hr><h4>On contacte qui ?</h4><span style="width:60%"><input class="inputEcoute col" type="text" placeholder="Son nom..." id="IdDuContact"></span><button id="btn-connex" onclick="Connexion(document.getElementById(\'IdDuContact\').value)" disabled>Connexion</button>',
+    BtnSalle: '<h4>Ouverture de ta salle</h4><p>Envoi simplement le lien ou le code QR aux participants.</p><div id="qrcode"></div><div id="monIdFrr" onclick="copyToClipboard();swal({text:\'Lien copié.\',icon:\'success\',button:!1,timer:1e3})"></div><button id="btn-connex" onclick="">Ouverture</button>',
+    BtnUIMessages: '<div style="display: flex; flex-flow: column; height: 100%; width:95%;"><h4 id="titreConv">_messages</h4><div class="convVidContainer"></div><div class="myVidContainer"><div class="vidbloc"><video data-etatcarre="min" id="it-sm-ee" onclick="vidFullScreen(this)" style="display:none;" muted></video></div></div><div id="attenteConv"><lottie-player  src="assets/anim/load.json" background="transparent"  speed="1"  style="width: 200px; height: 200px;" loop autoplay></lottie-player></div><div id="btnsCall" class="row text-center"></div><div class="txtDiv" id="smsContainer"></div><span class="txtDiv"><input type="text" class="col-10 inputEcoute" style="background-color: #efefefbe;" placeholder="Message..." id="idmsgAEnvoyer"><button class="col-2 buttonEct" onclick="SendMessage();" style="background-color: transparent;"><img src="assets/send.svg"></button></span></div>'
 };
 
 let noAddVideo = false;
@@ -265,7 +289,7 @@ const newVidChat = (viddt, identif) => {
 
 const vidFullScreen = (el) => {
     if (el.dataset.etatcarre == "min") {
-        el.style = "position: absolute; height: 80vw; width: auto; z-index:999; box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);  top: 50%; left: 50%; transform: translate(-50%, -50%);";
+        el.style = "position: absolute; height: 80vw; width: auto; z-index:999; box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);  top: 50%; left: 50%; transform: translate(-50%, -50%); max-height:80vw";
         el.dataset.etatcarre = "hii";
     } else {
         el.style = '';
@@ -278,18 +302,25 @@ function changementDeMenu(e) {
         n = document.querySelector("#boutonsMenu"),
         o = document.querySelector("#returnArrow");
     uiConnex("hide");
-    "" == idMoi && "" != document.querySelector("#inputChanmax").value && (idMoi = String(document.querySelector("#inputChanmax").value.replace(/[^\w\s]/gi, "").replace(/ /g, "")) + "-" + String(Math.floor(1000 * Math.random())), localStorage.setItem("pseudoAvant", document.querySelector("#inputChanmax").value));
-    lastPressed != e.id ? (t.style.transform = "rotateX(-90deg)", "BtnUIMessages" == e.id ? (n.style.transform = "translateY(50vh)", t.style.margin = "0px") : (t.style.height = "65%", n.style.display = ""), setTimeout(() => {
-        if (zonePrincipalee.innerHTML = dicoZones[e.id], t.style.transform = "rotateX(0deg)", "BtnUIMessages" == e.id ? (t.style.height = "100vh", t.style.width = "100vw", t.style.boxShadow = "0px 0px 0px transparent", t.style.backgroundColor = "transparent", n.style.display = "none", o.style.transform = "translateX(0)", document.querySelector("#titreConv").innerHTML = "✉ " + String(idAutre), document.querySelector("#idmsgAEnvoyer").addEventListener("keydown", (function (e) {
-                "Enter" === e.key && SendMessage()
-            }))) : (t.style.width = "auto", t.style.boxShadow = "", t.style.backgroundColor = "", t.style.margin = "0px 20px", o.style.transform = "translateX(50px)", n.style.transform = "translateY(0vh)"), "BtnConnaissance" == e.id) {
+    "" == idMoi && "" != document.querySelector("#inputChanmax").value && (idMoi = String(document.querySelector("#inputChanmax").value) + "-" + String(Math.floor(100 * Math.random())), localStorage.setItem("pseudoAvant", document.querySelector("#inputChanmax").value));
+    lastPressed != e.id ? (t.style.transform = "rotateX(-96deg)", "BtnUIMessages" == e.id ? (n.style.transform = "translateY(50vh)", t.style.margin = "0px") : (t.style.height = "65%", n.style.display = ""), setTimeout(() => {
+        zonePrincipalee.innerHTML = dicoZones[e.id]
+        t.style.transform = "rotateX(0deg)";
+        "BtnUIMessages" == e.id ? (t.style.height = "100vh", t.style.width = "100vw", t.style.boxShadow = "0px 0px 0px transparent", t.style.backgroundColor = "transparent", n.style.display = "none", o.style.transform = "translateX(0)", document.querySelector("#titreConv").innerHTML = getEmoji(idAutre) + " " + String(idAutre), document.querySelector("#idmsgAEnvoyer").addEventListener("keydown", (function (e) {
+            "Enter" === e.key && SendMessage()
+        }))) : (t.style.width = "auto", t.style.boxShadow = "", t.style.backgroundColor = "", t.style.margin = "0px 20px", o.style.transform = "translateX(50px)", n.style.transform = "translateY(0vh)")
+        if ("BtnConnaissance" == e.id) {
             uiConnex("on");
             let t = document.querySelector("#btn-connex");
-            document.querySelector("#IdDuContact").addEventListener("keypress", (function (e) {
+            document.querySelector("#IdDuContact").addEventListener("keypress", (e) => {
                 "" != document.querySelector("#IdDuContact").value && 1 == idDefini && (t.style.backgroundColor = "#5770BE", t.disabled = !1)
-            })), null != localStorage.getItem("codeAmi") && (document.querySelector("#IdDuContact").value = idAutre, t.style.backgroundColor = "#5770BE", t.disabled = !1), JeSuisLanceur(e.id)
+            })
+            null != localStorage.getItem("codeAmi") && (document.querySelector("#IdDuContact").value = idAutre, t.style.backgroundColor = "#5770BE", t.disabled = !1), JeSuisLanceur(e.id)
+        } else if ("BtnSalle" == e.id) {
+            uiConnex("on");
+            null != localStorage.getItem("codeAmi") && (document.querySelector("#IdDuContact").value = idAutre, t.style.backgroundColor = "#5770BE", t.disabled = !1), JeSuisLanceur(e.id)
         }
-    }, 400), lastPressed = e.id) : (t.style.transform = "rotateX(-90deg)", setTimeout(() => {
+    }, 400), lastPressed = e.id) : (t.style.transform = "rotateX(-96deg)", setTimeout(() => {
         zonePrincipalee.innerHTML = dicoZones.returnArrow, t.style.transform = "rotateX(0deg)"
     }, 400), lastPressed = "none"), setTimeout(() => {
         null != document.querySelector("#inputChanmax") && (document.querySelector("#inputChanmax").value = localStorage.getItem("pseudoAvant"))
@@ -304,6 +335,7 @@ function copyToClipboard() {
     var e = document.createElement("textarea");
     document.body.appendChild(e), e.value = String("ecoute.app/" + idMoi), e.select(), document.execCommand("copy"), document.body.removeChild(e)
 }
+
 document.getElementById("zonePrincipalee").innerHTML = dicoZones.returnArrow, document.querySelector("#inputChanmax").value = localStorage.getItem("pseudoAvant"), null != localStorage.getItem("codeAmi") && (idAutre = localStorage.getItem("codeAmi"), changementDeMenu(fakeBtnMenu[2]), document.querySelector("#boutonsMenu").style.transform = "translateY(50vh)");
 var borderStyleSheet = document.createElement("style");
 
@@ -317,19 +349,26 @@ function closeBackToMenu(e) {
     }).then(t => {
         switch (t) {
             case "defeat":
-                try {
-                    streamLocal.getTracks().forEach(e => e.stop())
-                } catch (e) {}
-                idDefini = !1;
-                peer.destroy();
-                changementDeMenu(e);
-                idMoi = '';
-                document.querySelector("#connexStat").innerHTML = "<span id='connexStat'>Connexion...</span>"
+                quitConv(e);
                 break;
             default:
                 break
         }
     })
+}
+
+function quitConv(id) {
+    try {
+        streamLocal.getTracks().forEach(e => e.stop())
+    } catch (e) {}
+    idDefini = !1;
+    peer.destroy();
+    changementDeMenu(id);
+    idMoi = '';
+    listePaires = [];
+    listeConnexions = [];
+    listeCalls = [];
+    document.querySelector("#connexStat").innerHTML = "<span id='connexStat'>Connexion...</span>";
 }
 
 function saveNewSignaling() {
@@ -374,7 +413,7 @@ function listPeersFun() {
     let divlistpr = document.createElement("div")
     divlistpr.insertAdjacentHTML("afterbegin", "<u>Participants : </u>")
     for (ii in listePaires) {
-        divlistpr.insertAdjacentHTML("beforeend", "<p>" + String(listePaires[ii]) + "</p>")
+        divlistpr.insertAdjacentHTML("beforeend", "<p>" + getEmoji(String(listePaires[ii])) + String(listePaires[ii]) + "</p>")
     }
     swal({
         content: divlistpr,
