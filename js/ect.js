@@ -136,7 +136,10 @@ function paramCall(ecall) {
 
 function clsCall() {
     streamLocal.getTracks().forEach(e => e.stop());
-    document.getElementsByClassName("vidCont")[1].style.display = "none";
+    document.querySelector("#it-sm-ee").style.display = "none";
+    for (ii in listeConnexions) {
+        listeConnexions[ii].send("$^^@'}" + idMoi);
+    };
 };
 
 function Connexion(e) {
@@ -153,12 +156,8 @@ function Connexion(e) {
 
 function paramConn(e) {
     e.on("data", (function (e) {
-        if (!String(e).includes("^^////")) {
-            if (String(e).includes("^!%^")) e = getEmoji(e.split("^!%^")[0].split("-")[0]) + " : " + e.split("^!%^")[1];
-            divSms = document.querySelector("#smsContainer");
-            divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
-            divSms.scrollTop = divSms.scrollHeight;
-        } else {
+        let divSms = document.querySelector("#smsContainer");
+        if (String(e).includes("^^////")) {
             console.log(e)
             let msg = String(e.replace("^^////", "")).split(',').filter(e => e !== idMoi);
             msg = msg.filter(e => listePaires.indexOf(e) < 0)
@@ -171,6 +170,16 @@ function paramConn(e) {
                 document.querySelector("#attenteConv").remove();
             } catch (e) {}
             document.querySelector("#btnsCall").innerHTML = boutonsCall;
+        } else if (String(e).includes("=%%*=%")) {
+            let sonID = e.split("=%%*=%")[1]
+            divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left; opacity:.6' class='smsTxt'>" + sonID + " s'est deconnecté.</div>");
+        } else if (String(e).includes("$^^@'}")) {
+            let sonID = e.split("$^^@'}")[1]
+            document.querySelector("#a" + sonID).parentElement.remove();
+        } else {
+            if (String(e).includes("^!%^")) e = getEmoji(e.split("^!%^")[0].split("-")[0]) + " : " + e.split("^!%^")[1];
+            divSms.insertAdjacentHTML("beforeend", "<div style='text-align: left;' class='smsTxt'>" + String(e) + "</div>");
+            divSms.scrollTop = divSms.scrollHeight;
         };
     }));
     e.on("close", (function () {
@@ -252,7 +261,15 @@ function CallDude(e) {
     });
 };
 
-var boutonsCall = '<div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'video\')">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button class="buttonEct callBtn" onclick="CallDude(\'ecran\')">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'audio\')">📞 Appel vocal</button></div>'
+const changeBtnToRaccro = (elem) => {
+    elem.onclick = () => {
+        clsCall();
+        document.querySelector("#btnsCall").innerHTML = boutonsCall;
+    }
+    elem.innerHTML = "❌ Raccrocher"
+}
+
+var boutonsCall = '<div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'video\'); changeBtnToRaccro(this)">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button class="buttonEct callBtn" onclick="CallDude(\'ecran\');changeBtnToRaccro(this);">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'audio\');changeBtnToRaccro(this);">📞 Appel vocal</button></div>'
 
 var dicoZones = {
     returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom..." onkeypress="return /[0-9a-zA-Z]/i.test(event.key)">',
@@ -358,6 +375,9 @@ function closeBackToMenu(e) {
 }
 
 function quitConv(id) {
+    for (ii in listeConnexions) {
+        listeConnexions[ii].send("=%%*=%" + idMoi);
+    };
     try {
         streamLocal.getTracks().forEach(e => e.stop())
     } catch (e) {}
@@ -419,5 +439,14 @@ function listPeersFun() {
         content: divlistpr,
     })
 }
+
+window.onbeforeunload = function () {
+    try {
+        for (ii in listeConnexions) {
+            listeConnexions[ii].send("=%%*=%" + idMoi);
+        };
+    } catch (e) {}
+}
+
 
 //changementDeMenu(fakeBtnMenu[1])
