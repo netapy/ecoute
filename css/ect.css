@@ -317,7 +317,6 @@
      animation-delay: 1.5s
  }
 
-
  .vidbloc {
      opacity: 1;
      display: flex;
@@ -334,6 +333,12 @@
  .convVidContainer .vidbloc video {
      height: 100%;
  }
+
+ @media (max-width: 696px) {
+    .convVidContainer .vidbloc video {
+        width: 100%;
+    }
+  }
 
  #it-sm-ee {
      border-radius: 10px;

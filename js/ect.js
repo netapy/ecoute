@@ -1,34 +1,4 @@
 var lastPressed, peer, conn, call, idAutre;
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
-//zef
 var listePaires = [];
 var listeConnexions = [];
 var listeCalls = [];
@@ -121,7 +91,6 @@ function JeSuisLanceur(e) {
                         paramConn(listeConnexions[indexConn]);
                         listeConnexions[indexConn].send("^^////" + String(listePaires));
                         indexConn += 1;
-                        if (myCallTick != "none") CallDude(myCallTick);
                         if (listeConnexions.filter((e) => {
                                 return e != null
                             }).length > 1) document.querySelector("#titreConv").innerHTML = "📡 Groupe <button class='btn' onclick='listPeersFun()'>👥</button>";
@@ -130,6 +99,7 @@ function JeSuisLanceur(e) {
                                 document.querySelector("#attenteConv").remove();
                             } catch (e) {}
                             document.querySelector("#btnsCall").innerHTML = boutonsCall;
+                            if (myCallTick != "none") CallDude(myCallTick);
                         }, 500)
                         break;
                     default:
@@ -243,6 +213,8 @@ function SendMessage() {
 }
 
 function CallDude(e) {
+    console.log("calling avec " + e)
+    changeBtnToRaccro(e)
     try {
         streamLocal.getTracks().forEach(e => e.stop());
     } catch (e) {};
@@ -290,14 +262,15 @@ function CallDude(e) {
 };
 
 const changeBtnToRaccro = (elem) => {
-    elem.onclick = () => {
+    let element = document.querySelector("#btn" + elem)
+    element.onclick = () => {
         clsCall();
         document.querySelector("#btnsCall").innerHTML = boutonsCall;
     }
-    elem.innerHTML = "❌ Raccrocher"
-}
+    element.innerHTML = "❌ Raccrocher"
+};
 
-var boutonsCall = '<div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'video\'); changeBtnToRaccro(this)">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button class="buttonEct callBtn" onclick="CallDude(\'ecran\');changeBtnToRaccro(this);">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button class="buttonEct callBtn" onclick="CallDude(\'audio\');changeBtnToRaccro(this);">📞 Appel vocal</button></div>'
+var boutonsCall = '<div class="col-md-4 col-s-12"><button id="btnvideo" class="buttonEct callBtn" onclick="CallDude(\'video\');">📷 Appel vidéo</button></div><div class="col-md-4 col-s-12 d-none d-md-block"><button id="btnecran" class="buttonEct callBtn" onclick="CallDude(\'ecran\');">💻 Partage d\'écran</button></div><div class="col-md-4 col-s-12"><button class="buttonEct callBtn" id="btnaudio" onclick="CallDude(\'audio\');">📞 Appel vocal</button></div>'
 
 var dicoZones = {
     returnArrow: '<img alt="Logo de Ecoute.app" class="nudeLogo" src="assets/ecoute.svg" style="height: 150px; filter: brightness(1.1);"><input class="inputEcoute" id="inputChanmax" placeholder="Ton nom..." onkeypress="return /[0-9a-zA-Z]/i.test(event.key)">',
@@ -403,9 +376,13 @@ function closeBackToMenu(e) {
 }
 
 function quitConv(id) {
-    for (ii in listeConnexions) {
-        listeConnexions[ii].send("=%%*=%" + idMoi);
-    };
+    try {
+        for (ii in listeConnexions) {
+            listeConnexions[ii].send("=%%*=%" + idMoi);
+        };
+    } catch (e) {
+        console.log(e)
+    }
     try {
         streamLocal.getTracks().forEach(e => e.stop())
     } catch (e) {}
