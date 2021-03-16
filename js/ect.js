@@ -1,11 +1,39 @@
 var lastPressed, peer, conn, call, idAutre;
-
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
+//zef
 var listePaires = [];
 var listeConnexions = [];
 var listeCalls = [];
 var indexConn = 0;
 var idMoi = "";
-
 "serviceWorker" in navigator && navigator.serviceWorker.register("service-worker.js");
 
 let SignalingHost,
